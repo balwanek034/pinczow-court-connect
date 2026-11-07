@@ -21,11 +21,9 @@ const nowyPracownik = z.object({
   role: z.enum(["admin", "pracownik"]),
 });
 
-async function assertAdmin(supabase: { rpc: (...a: never[]) => unknown }, userId: string) {
-  // has_role is SECURITY DEFINER, readable by any signed-in user
-  const { data, error } = (await (supabase as unknown as {
-    rpc: (fn: string, args: Record<string, unknown>) => Promise<{ data: boolean | null; error: unknown }>;
-  }).rpc("has_role", { _user_id: userId, _role: "admin" }));
+async function assertAdmin(supabase: SupabaseClient<Database>, userId: string) {
+  // has_role is SECURITY DEFINER, callable by any signed-in user; checked as the caller
+  const { data, error } = await supabase.rpc("has_role", { _user_id: userId, _role: "admin" });
   if (error || !data) throw new Error("Brak uprawnień administratora.");
 }
 
