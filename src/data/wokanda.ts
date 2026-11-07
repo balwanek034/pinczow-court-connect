@@ -79,7 +79,7 @@ export function wokandaNaDzien(iso: string): Posiedzenie[] {
   if (!czyDzienRoboczy(iso)) return [];
   const seed = Number(iso.replaceAll("-", ""));
   const r = rng(seed);
-  const pick = <T,>(a: T[]) => a[Math.floor(r() * a.length)];
+  const pick = <T,>(a: T[]): T => a[Math.floor(r() * a.length)] as T;
   const rok = iso.slice(2, 4);
   const lista: Posiedzenie[] = [];
 
