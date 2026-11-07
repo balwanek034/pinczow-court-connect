@@ -10,33 +10,92 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AktualnosciRouteImport } from './routes/aktualnosci'
+import { Route as KontaktRouteImport } from './routes/kontakt'
+import { Route as LogowanieRouteImport } from './routes/logowanie'
+import { Route as WokandaRouteImport } from './routes/wokanda'
+import { Route as WydzialyRouteImport } from './routes/wydzialy'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AktualnosciRoute = AktualnosciRouteImport.update({
+  id: '/aktualnosci',
+  path: '/aktualnosci',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const KontaktRoute = KontaktRouteImport.update({
+  id: '/kontakt',
+  path: '/kontakt',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LogowanieRoute = LogowanieRouteImport.update({
+  id: '/logowanie',
+  path: '/logowanie',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const WokandaRoute = WokandaRouteImport.update({
+  id: '/wokanda',
+  path: '/wokanda',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const WydzialyRoute = WydzialyRouteImport.update({
+  id: '/wydzialy',
+  path: '/wydzialy',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/aktualnosci': typeof AktualnosciRoute
+  '/kontakt': typeof KontaktRoute
+  '/logowanie': typeof LogowanieRoute
+  '/wokanda': typeof WokandaRoute
+  '/wydzialy': typeof WydzialyRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/aktualnosci': typeof AktualnosciRoute
+  '/kontakt': typeof KontaktRoute
+  '/logowanie': typeof LogowanieRoute
+  '/wokanda': typeof WokandaRoute
+  '/wydzialy': typeof WydzialyRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/aktualnosci': typeof AktualnosciRoute
+  '/kontakt': typeof KontaktRoute
+  '/logowanie': typeof LogowanieRoute
+  '/wokanda': typeof WokandaRoute
+  '/wydzialy': typeof WydzialyRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    '/' | '/aktualnosci' | '/kontakt' | '/logowanie' | '/wokanda' | '/wydzialy'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    '/' | '/aktualnosci' | '/kontakt' | '/logowanie' | '/wokanda' | '/wydzialy'
+  id:
+    | '__root__'
+    | '/'
+    | '/aktualnosci'
+    | '/kontakt'
+    | '/logowanie'
+    | '/wokanda'
+    | '/wydzialy'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AktualnosciRoute: typeof AktualnosciRoute
+  KontaktRoute: typeof KontaktRoute
+  LogowanieRoute: typeof LogowanieRoute
+  WokandaRoute: typeof WokandaRoute
+  WydzialyRoute: typeof WydzialyRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +107,51 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/aktualnosci': {
+      id: '/aktualnosci'
+      path: '/aktualnosci'
+      fullPath: '/aktualnosci'
+      preLoaderRoute: typeof AktualnosciRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/kontakt': {
+      id: '/kontakt'
+      path: '/kontakt'
+      fullPath: '/kontakt'
+      preLoaderRoute: typeof KontaktRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/logowanie': {
+      id: '/logowanie'
+      path: '/logowanie'
+      fullPath: '/logowanie'
+      preLoaderRoute: typeof LogowanieRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/wokanda': {
+      id: '/wokanda'
+      path: '/wokanda'
+      fullPath: '/wokanda'
+      preLoaderRoute: typeof WokandaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/wydzialy': {
+      id: '/wydzialy'
+      path: '/wydzialy'
+      fullPath: '/wydzialy'
+      preLoaderRoute: typeof WydzialyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AktualnosciRoute: AktualnosciRoute,
+  KontaktRoute: KontaktRoute,
+  LogowanieRoute: LogowanieRoute,
+  WokandaRoute: WokandaRoute,
+  WydzialyRoute: WydzialyRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
