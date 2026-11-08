@@ -26,9 +26,9 @@ const GROUPS: { title: string; bg: string; items: Item[] }[] = [
     items: [
       { label: "Logowanie pracowników", to: "/logowanie" },
       { label: "Portal Informacyjny", href: SAD.portal },
-      { label: "Elektroniczne Księgi Wieczyste", href: "https://ekw.ms.gov.pl" },
-      { label: "Orzecznictwo", href: "https://orzeczenia.ms.gov.pl" },
-      { label: "Krajowy Rejestr Karny", href: "https://ekrk.ms.gov.pl" },
+      { label: "Elektroniczne Księgi Wieczyste", href: "" },
+      { label: "Orzecznictwo", href: "" },
+      { label: "Krajowy Rejestr Karny", href: "" },
     ],
   },
 ];
