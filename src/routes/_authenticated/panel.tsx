@@ -57,17 +57,22 @@ export interface OrzeczenieItem {
   sygnatura: string;
   data_orzeczenia: string;
   wydzial: string;
-  rodzaj: string;
+  rodzaj: "Wyrok" | "Postanowienie" | "Uchwała";
+  status_prawomocnosci: "PRAWOMOCNE" | "NIEPRAWOMOCNE";
   sedzia: string;
-  tytul: string;
-  teza: string;
+  protokolant: string;
+  tryb: "na rozprawie" | "na posiedzeniu niejawnym";
+  strony: string;
+  przedmiot: string;
+  sentencja: string;     // RUBRYKA 1: Treść wyroku / rozstrzygnięcia
+  uzasadnienie: string;  // RUBRYKA 2: Treść uzasadnienia
 }
 
 function Panel() {
   const { profil, user, role, isAdmin, isPracownik, loading } = useAuth();
   const wyloguj = useWyloguj();
 
-  const [aktywnaZakladka, setAktywnaZakladka] = useState<"wokanda" | "aktualnosci" | "orzecznictwo">("wokanda");
+  const [aktywnaZakladka, setAktywnaZakladka] = useState<"wokanda" | "orzecznictwo" | "aktualnosci">("orzecznictwo");
 
   // Stan wokandy
   const [wokandy, setWokandy] = useState<WokandaItem[]>([]);
@@ -90,10 +95,15 @@ function Panel() {
   const [orzSygnatura, setOrzSygnatura] = useState("");
   const [orzData, setOrzData] = useState("");
   const [orzWydzial, setOrzWydzial] = useState("I Wydział Cywilny");
-  const [orzRodzaj, setOrzRodzaj] = useState("Wyrok");
+  const [orzRodzaj, setOrzRodzaj] = useState<"Wyrok" | "Postanowienie">("Wyrok");
+  const [orzStatus, setOrzStatus] = useState<"PRAWOMOCNE" | "NIEPRAWOMOCNE">("PRAWOMOCNE");
   const [orzSedzia, setOrzSedzia] = useState("");
-  const [orzTytul, setOrzTytul] = useState("");
-  const [orzTeza, setOrzTeza] = useState("");
+  const [orzProtokolant, setOrzProtokolant] = useState("");
+  const [orzTryb, setOrzTryb] = useState<"na rozprawie" | "na posiedzeniu niejawnym">("na rozprawie");
+  const [orzStrony, setOrzStrony] = useState("");
+  const [orzPrzedmiot, setOrzPrzedmiot] = useState("");
+  const [orzSentencja, setOrzSentencja] = useState("");       // Sentencja
+  const [orzUzasadnienie, setOrzUzasadnienie] = useState(""); // Uzasadnienie
 
   const [sukcesKomunikat, setSukcesKomunikat] = useState<string | null>(null);
 
@@ -112,6 +122,48 @@ function Panel() {
       console.error(e);
     }
   }, []);
+
+  // Dodawanie orzeczenia
+  const handleDodajOrzeczenie = (e: React.FormEvent) => {
+    e.preventDefault();
+    const nowe: OrzeczenieItem = {
+      id: Date.now().toString(),
+      sygnatura: orzSygnatura.startsWith("Sygn") ? orzSygnatura : `Sygnatura akt ${orzSygnatura}`,
+      data_orzeczenia: orzData,
+      wydzial: orzWydzial,
+      rodzaj: orzRodzaj,
+      status_prawomocnosci: orzStatus,
+      sedzia: orzSedzia,
+      protokolant: orzProtokolant,
+      tryb: orzTryb,
+      strony: orzStrony,
+      przedmiot: orzPrzedmiot,
+      sentencja: orzSentencja,
+      uzasadnienie: orzUzasadnienie,
+    };
+
+    const lista = [nowe, ...orzeczenia];
+    setOrzeczenia(lista);
+    localStorage.setItem("sad_orzeczenia", JSON.stringify(lista));
+
+    setSukcesKomunikat("Pomyślnie dodano nowe orzeczenie do bazy sądu!");
+    setOrzSygnatura("");
+    setOrzData("");
+    setOrzSedzia("");
+    setOrzProtokolant("");
+    setOrzStrony("");
+    setOrzPrzedmiot("");
+    setOrzSentencja("");
+    setOrzUzasadnienie("");
+    setTimeout(() => setSukcesKomunikat(null), 4000);
+  };
+
+  const handleUsunOrzeczenie = (id: string) => {
+    if (!confirm("Czy na pewno chcesz usunąć to orzeczenie z bazy?")) return;
+    const lista = orzeczenia.filter((o) => o.id !== id);
+    setOrzeczenia(lista);
+    localStorage.setItem("sad_orzeczenia", JSON.stringify(lista));
+  };
 
   // Obsługa Wokandy
   const handleDodajWokande = (e: React.FormEvent) => {
@@ -172,38 +224,6 @@ function Panel() {
     localStorage.setItem("sad_aktualnosci", JSON.stringify(lista));
   };
 
-  // Obsługa Orzecznictwa
-  const handleDodajOrzeczenie = (e: React.FormEvent) => {
-    e.preventDefault();
-    const nowe: OrzeczenieItem = {
-      id: Date.now().toString(),
-      sygnatura: orzSygnatura,
-      data_orzeczenia: orzData,
-      wydzial: orzWydzial,
-      rodzaj: orzRodzaj,
-      sedzia: orzSedzia,
-      tytul: orzTytul,
-      teza: orzTeza,
-    };
-    const lista = [nowe, ...orzeczenia];
-    setOrzeczenia(lista);
-    localStorage.setItem("sad_orzeczenia", JSON.stringify(lista));
-    setSukcesKomunikat("Pomyślnie dodano orzeczenie do bazy!");
-    setOrzSygnatura("");
-    setOrzData("");
-    setOrzSedzia("");
-    setOrzTytul("");
-    setOrzTeza("");
-    setTimeout(() => setSukcesKomunikat(null), 4000);
-  };
-
-  const handleUsunOrzeczenie = (id: string) => {
-    if (!confirm("Czy na pewno chcesz usunąć to orzeczenie z bazy?")) return;
-    const lista = orzeczenia.filter((o) => o.id !== id);
-    setOrzeczenia(lista);
-    localStorage.setItem("sad_orzeczenia", JSON.stringify(lista));
-  };
-
   if (loading) {
     return (
       <PageShell crumbs={["Panel pracownika"]} title="Panel pracownika">
@@ -251,14 +271,14 @@ function Panel() {
             <ShieldCheck className="h-7 w-7" /> Panel administratora – konta
           </Link>
         )}
+        <Link to="/orzecznictwo" className={KAFEL}>
+          <FileText className="h-7 w-7" /> Przejdź do Portalu Orzeczeń
+        </Link>
         <Link to="/wokanda" className={KAFEL}>
           <CalendarDays className="h-7 w-7" /> Przejdź do publicznej wokandy
         </Link>
-        <Link to="/orzecznictwo" className={KAFEL}>
-          <FileText className="h-7 w-7" /> Przejdź do bazy orzecznictwa
-        </Link>
         <Link to="/aktualnosci" className={KAFEL}>
-          <Megaphone className="h-7 w-7" /> Przejdź do publicznych aktualności
+          <Megaphone className="h-7 w-7" /> Przejdź do publicznych ogłoszeń
         </Link>
       </div>
 
@@ -274,19 +294,6 @@ function Panel() {
       <div className="mb-6 flex border-b border-border">
         <button
           onClick={() => {
-            setAktywnaZakladka("wokanda");
-            setSukcesKomunikat(null);
-          }}
-          className={`px-4 py-2 font-serif text-sm font-bold transition-colors ${
-            aktywnaZakladka === "wokanda"
-              ? "border-b-2 border-primary bg-surface text-primary"
-              : "text-muted-foreground hover:text-foreground"
-          }`}
-        >
-          Zarządzanie wokandą
-        </button>
-        <button
-          onClick={() => {
             setAktywnaZakladka("orzecznictwo");
             setSukcesKomunikat(null);
           }}
@@ -297,6 +304,19 @@ function Panel() {
           }`}
         >
           Zarządzanie orzecznictwem
+        </button>
+        <button
+          onClick={() => {
+            setAktywnaZakladka("wokanda");
+            setSukcesKomunikat(null);
+          }}
+          className={`px-4 py-2 font-serif text-sm font-bold transition-colors ${
+            aktywnaZakladka === "wokanda"
+              ? "border-b-2 border-primary bg-surface text-primary"
+              : "text-muted-foreground hover:text-foreground"
+          }`}
+        >
+          Zarządzanie wokandą
         </button>
         <button
           onClick={() => {
@@ -316,48 +336,62 @@ function Panel() {
       {/* ZARZĄDZANIE ORZECZNICTWEM */}
       {aktywnaZakladka === "orzecznictwo" && (
         <div className="space-y-6">
-          <form onSubmit={handleDodajOrzeczenie} className="border border-border bg-surface p-4">
-            <h3 className="mb-4 font-serif text-base font-bold text-primary">Dodaj orzeczenie do bazy sądu</h3>
+          <form onSubmit={handleDodajOrzeczenie} className="border border-border bg-surface p-5">
+            <h3 className="mb-4 font-serif text-base font-bold text-primary">
+              Wprowadź orzeczenie do Portalu Orzeczeń
+            </h3>
+
             <div className="grid gap-3 sm:grid-cols-2 md:grid-cols-3">
+              {/* Sygnatura */}
               <div>
-                <label className="mb-1 block text-xs font-bold uppercase text-muted-foreground">Sygnatura akt</label>
+                <label className="mb-1 block text-xs font-bold uppercase text-muted-foreground">
+                  Sygnatura akt *
+                </label>
                 <input
                   type="text"
                   required
-                  placeholder="np. I C 145/26"
+                  placeholder="np. I C 45/25 lub II K 89/26"
                   value={orzSygnatura}
                   onChange={(e) => setOrzSygnatura(e.target.value)}
                   className="w-full border border-border bg-background px-3 py-1.5 text-sm"
                 />
               </div>
 
+              {/* Data */}
               <div>
-                <label className="mb-1 block text-xs font-bold uppercase text-muted-foreground">Data orzeczenia</label>
+                <label className="mb-1 block text-xs font-bold uppercase text-muted-foreground">
+                  Data orzeczenia *
+                </label>
                 <input
-                  type="date"
+                  type="text"
                   required
+                  placeholder="np. 31 lipca 2025 roku"
                   value={orzData}
                   onChange={(e) => setOrzData(e.target.value)}
                   className="w-full border border-border bg-background px-3 py-1.5 text-sm"
                 />
               </div>
 
+              {/* Rodzaj */}
               <div>
-                <label className="mb-1 block text-xs font-bold uppercase text-muted-foreground">Rodzaj orzeczenia</label>
+                <label className="mb-1 block text-xs font-bold uppercase text-muted-foreground">
+                  Rodzaj orzeczenia *
+                </label>
                 <select
                   value={orzRodzaj}
-                  onChange={(e) => setOrzRodzaj(e.target.value)}
+                  onChange={(e) => setOrzRodzaj(e.target.value as any)}
                   className="w-full border border-border bg-background px-3 py-1.5 text-sm"
                 >
-                  <option value="Wyrok">Wyrok</option>
+                  <option value="Wyrok">Wyrok (W imieniu RP)</option>
                   <option value="Postanowienie">Postanowienie</option>
-                  <option value="Uchwała">Uchwała</option>
-                  <option value="Zarządzenie">Zarządzenie</option>
                 </select>
               </div>
 
+              {/* Wydział */}
               <div>
-                <label className="mb-1 block text-xs font-bold uppercase text-muted-foreground">Wydział sądu</label>
+                <label className="mb-1 block text-xs font-bold uppercase text-muted-foreground">
+                  Wydział sądu *
+                </label>
                 <select
                   value={orzWydzial}
                   onChange={(e) => setOrzWydzial(e.target.value)}
@@ -370,58 +404,143 @@ function Panel() {
                 </select>
               </div>
 
-              <div className="md:col-span-2">
-                <label className="mb-1 block text-xs font-bold uppercase text-muted-foreground">Sędzia / Skład orzekający</label>
+              {/* Status prawomocności */}
+              <div>
+                <label className="mb-1 block text-xs font-bold uppercase text-muted-foreground">
+                  Prawomocność *
+                </label>
+                <select
+                  value={orzStatus}
+                  onChange={(e) => setOrzStatus(e.target.value as any)}
+                  className="w-full border border-border bg-background px-3 py-1.5 text-sm font-semibold"
+                >
+                  <option value="PRAWOMOCNE">ORZECZENIE PRAWOMOCNE</option>
+                  <option value="NIEPRAWOMOCNE">ORZECZENIE NIEPRAWOMOCNE</option>
+                </select>
+              </div>
+
+              {/* Tryb */}
+              <div>
+                <label className="mb-1 block text-xs font-bold uppercase text-muted-foreground">
+                  Tryb posiedzenia *
+                </label>
+                <select
+                  value={orzTryb}
+                  onChange={(e) => setOrzTryb(e.target.value as any)}
+                  className="w-full border border-border bg-background px-3 py-1.5 text-sm"
+                >
+                  <option value="na rozprawie">na rozprawie</option>
+                  <option value="na posiedzeniu niejawnym">na posiedzeniu niejawnym</option>
+                </select>
+              </div>
+
+              {/* Sędzia */}
+              <div>
+                <label className="mb-1 block text-xs font-bold uppercase text-muted-foreground">
+                  Przewodniczący / Sędzia *
+                </label>
                 <input
                   type="text"
                   required
-                  placeholder="np. SSO Anna Nowak (przewodniczący)"
+                  placeholder="np. sędzia Grzegorz Machynia"
                   value={orzSedzia}
                   onChange={(e) => setOrzSedzia(e.target.value)}
                   className="w-full border border-border bg-background px-3 py-1.5 text-sm"
                 />
               </div>
 
-              <div className="sm:col-span-2 md:col-span-3">
-                <label className="mb-1 block text-xs font-bold uppercase text-muted-foreground">Przedmiot / Tytuł sprawy</label>
+              {/* Protokolant */}
+              <div>
+                <label className="mb-1 block text-xs font-bold uppercase text-muted-foreground">
+                  Protokolant (opcjonalnie)
+                </label>
                 <input
                   type="text"
-                  required
-                  placeholder="np. o zapłatę, o ochronę dóbr osobistych"
-                  value={orzTytul}
-                  onChange={(e) => setOrzTytul(e.target.value)}
+                  placeholder="np. starszy sekretarz sądowy Kinga Swat"
+                  value={orzProtokolant}
+                  onChange={(e) => setOrzProtokolant(e.target.value)}
                   className="w-full border border-border bg-background px-3 py-1.5 text-sm"
                 />
               </div>
 
+              {/* Przedmiot sprawy */}
+              <div>
+                <label className="mb-1 block text-xs font-bold uppercase text-muted-foreground">
+                  Przedmiot sprawy *
+                </label>
+                <input
+                  type="text"
+                  required
+                  placeholder="np. o rozwiązanie umowy użytkowania wieczystego"
+                  value={orzPrzedmiot}
+                  onChange={(e) => setOrzPrzedmiot(e.target.value)}
+                  className="w-full border border-border bg-background px-3 py-1.5 text-sm"
+                />
+              </div>
+
+              {/* Oznaczenie stron */}
               <div className="sm:col-span-2 md:col-span-3">
-                <label className="mb-1 block text-xs font-bold uppercase text-muted-foreground">Teza / Sentencja / Uzasadnienie</label>
+                <label className="mb-1 block text-xs font-bold uppercase text-muted-foreground">
+                  Oznaczenie stron sprawy *
+                </label>
+                <input
+                  type="text"
+                  required
+                  placeholder="np. sprawy z powództwa Skarbu Państwa przeciwko (...) S.A. w K."
+                  value={orzStrony}
+                  onChange={(e) => setOrzStrony(e.target.value)}
+                  className="w-full border border-border bg-background px-3 py-1.5 text-sm"
+                />
+              </div>
+
+              {/* RUBRYKA 1: SENTENCJA ROZSTRZYGNIĘCIA */}
+              <div className="sm:col-span-2 md:col-span-3 border-t border-border pt-3">
+                <label className="mb-1 flex items-center justify-between text-xs font-bold uppercase text-primary">
+                  <span>Rubryka 1: Sentencja rozstrzygnięcia (treść wyroku / postanowienia) *</span>
+                  <span className="font-normal text-muted-foreground lowercase">to co orzeka sąd (np. rozwiązuje..., zasądza..., umarza...)</span>
+                </label>
                 <textarea
                   required
                   rows={4}
-                  placeholder="Wpisz treść orzeczenia, tezę prawną lub fragment uzasadnienia..."
-                  value={orzTeza}
-                  onChange={(e) => setOrzTeza(e.target.value)}
-                  className="w-full border border-border bg-background px-3 py-1.5 text-sm"
+                  placeholder="Wpisz treść orzeczenia, np.:&#10;1. rozwiązuje stosunek prawny użytkowania wieczystego działki gruntu...&#10;2. nakazuje pozwanemu wydanie nieruchomości powodowi..."
+                  value={orzSentencja}
+                  onChange={(e) => setOrzSentencja(e.target.value)}
+                  className="w-full border border-border bg-background p-3 font-serif text-sm italic leading-relaxed"
+                />
+              </div>
+
+              {/* RUBRYKA 2: UZASADNIENIE */}
+              <div className="sm:col-span-2 md:col-span-3 border-t border-border pt-3">
+                <label className="mb-1 flex items-center justify-between text-xs font-bold uppercase text-primary">
+                  <span>Rubryka 2: Uzasadnienie orzeczenia *</span>
+                  <span className="font-normal text-muted-foreground lowercase">motywy rozstrzygnięcia, artykuły k.c./k.k., stan faktyczny</span>
+                </label>
+                <textarea
+                  required
+                  rows={7}
+                  placeholder="Wpisz pełne uzasadnienie orzeczenia, np.:&#10;Pozwem z dnia 17 marca 2025 roku powód Skarb Państwa wniósł o...&#10;&#10;W uzasadnieniu pozwu podniesiono, że... Zgodnie z art. 240 k.c. umowa o oddanie gruntu...&#10;&#10;Sąd Rejonowy po przeprowadzeniu postępowania ustalił, iż..."
+                  value={orzUzasadnienie}
+                  onChange={(e) => setOrzUzasadnienie(e.target.value)}
+                  className="w-full border border-border bg-background p-3 font-serif text-sm italic leading-relaxed"
                 />
               </div>
             </div>
 
             <button
               type="submit"
-              className="mt-4 inline-flex items-center gap-2 bg-primary px-4 py-2 text-xs font-bold uppercase text-primary-foreground hover:bg-primary/90"
+              className="mt-4 inline-flex items-center gap-2 bg-primary px-5 py-2.5 text-xs font-bold uppercase text-primary-foreground hover:bg-primary/90"
             >
-              <Plus className="h-4 w-4" /> Opublikuj orzeczenie
+              <Plus className="h-4 w-4" /> Opublikuj orzeczenie z uzasadnieniem
             </button>
           </form>
 
           {/* Tabela orzeczeń */}
           <div className="border border-border bg-surface p-4">
             <h3 className="mb-3 font-serif text-base font-bold text-primary">
-              Wprowadzone orzeczenia ({orzeczenia.length})
+              Wprowadzone orzeczenia w bazie ({orzeczenia.length})
             </h3>
             {orzeczenia.length === 0 ? (
-              <p className="text-xs text-muted-foreground">Brak wprowadzonych orzeczeń w bazie sądu.</p>
+              <p className="text-xs text-muted-foreground">Brak orzeczeń wprowadzonych przez pracowników.</p>
             ) : (
               <div className="overflow-x-auto">
                 <table className="w-full text-left text-xs">
@@ -430,7 +549,7 @@ function Panel() {
                       <th className="p-2">Sygnatura</th>
                       <th className="p-2">Data</th>
                       <th className="p-2">Rodzaj</th>
-                      <th className="p-2">Wydział</th>
+                      <th className="p-2">Prawomocność</th>
                       <th className="p-2">Sędzia</th>
                       <th className="p-2 text-right">Akcja</th>
                     </tr>
@@ -441,7 +560,17 @@ function Panel() {
                         <td className="p-2 font-mono font-bold">{o.sygnatura}</td>
                         <td className="p-2">{o.data_orzeczenia}</td>
                         <td className="p-2">{o.rodzaj}</td>
-                        <td className="p-2">{o.wydzial}</td>
+                        <td className="p-2">
+                          <span
+                            className={`rounded px-1.5 py-0.5 text-[10px] font-bold ${
+                              o.status_prawomocnosci === "NIEPRAWOMOCNE"
+                                ? "bg-amber-100 text-amber-800"
+                                : "bg-emerald-100 text-emerald-800"
+                            }`}
+                          >
+                            {o.status_prawomocnosci}
+                          </span>
+                        </td>
                         <td className="p-2">{o.sedzia}</td>
                         <td className="p-2 text-right">
                           <button
