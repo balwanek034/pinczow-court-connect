@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { PageShell } from "@/components/court/PageShell";
 import { najblizszeDni, toISO, wokandaNaDzien } from "@/data/wokanda";
+import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/wokanda")({
   head: () => ({
@@ -17,10 +18,20 @@ export const Route = createFileRoute("/wokanda")({
   component: Wokanda,
 });
 
-const WYDZIALY = ["Wszystkie", "I Wydział Cywilny", "II Wydział Karny", "III Wydział Rodzinny i Nieletnich"];
+const WYDZIALY = ["Wszystkie", "I Wydział Cywilny", "II Wydział Karny", "III Wydział Rodzinny i Nieletnich", "IV Wydział Ksiąg Wieczystych"];
+
+interface SprawaDB {
+  id: string;
+  sygnatura: string;
+  data: string;
+  godzina: string;
+  sala: string;
+  wydzial: string;
+  przewodniczacy: string;
+  rodzaj_sprawy: string;
+}
 
 function Wokanda() {
-  // data startowa ustalana po stronie przeglądarki, by uniknąć rozjazdu SSR
   const [start, setStart] = useState("2026-11-09");
   useEffect(() => setStart(toISO(new Date())), []);
 
@@ -29,10 +40,54 @@ function Wokanda() {
   const [wydzial, setWydzial] = useState("Wszystkie");
   const [sygn, setSygn] = useState("");
 
+  // Sprawy pobrane z bazy danych
+  const [sprawyDB, setSprawyDB] = useState<SprawaDB[]>([]);
+  const [ladowanie, setLadowanie] = useState(true);
+
+  useEffect(() => {
+    async function wczytajWokande() {
+      try {
+        const { data, error } = await (supabase as any)
+          .from("wokanda")
+          .select("*")
+          .order("godzina", { ascending: true });
+
+        if (!error && data && data.length > 0) {
+          setSprawyDB(data);
+        }
+      } catch (e) {
+        console.warn("Tabela wokanda jeszcze nie istnieje lub błąd odczytu:", e);
+      } finally {
+        setLadowanie(false);
+      }
+    }
+
+    void wczytajWokande();
+  }, []);
+
   const aktywny = dzien && dni.includes(dzien) ? dzien : (dni[0] ?? start);
-  const lista = wokandaNaDzien(aktywny).filter(
+
+  // Filtrowanie spraw z bazy danych dla wybranego dnia
+  const sprawyZDniaDB = sprawyDB.filter((s) => s.data === aktywny);
+
+  // Jeśli w bazie są sprawy na ten dzień, bierzemy je z bazy; jeśli jeszcze nie ma – bierzemy przykładowe z generatora
+  const listaBazowa =
+    sprawyZDniaDB.length > 0
+      ? sprawyZDniaDB.map((s) => ({
+          godzina: s.godzina.slice(0, 5),
+          sygnatura: s.sygnatura,
+          wydzial: s.wydzial,
+          sala: s.sala,
+          rodzaj: "jawne",
+          przedmiot: `${s.rodzaj_sprawy} (${s.przewodniczacy})`,
+        }))
+      : wokandaNaDzien(aktywny);
+
+  const lista = listaBazowa.filter(
     (p) =>
-      (wydzial === "Wszystkie" || p.wydzial === wydzial.replace(" Wydział ", " Wydz. ")) &&
+      (wydzial === "Wszystkie" ||
+        p.wydzial === wydzial ||
+        p.wydzial === wydzial.replace(" Wydział ", " Wydz. ")) &&
       p.sygnatura.toLowerCase().replace(/\s/g, "").includes(sygn.toLowerCase().replace(/\s/g, "")),
   );
 
@@ -43,6 +98,7 @@ function Wokanda() {
         Terminy mogą ulec zmianie – aktualne informacje dostępne są w Portalu Informacyjnym.
       </p>
 
+      {/* Wybór dnia */}
       <div className="mb-4 flex flex-wrap gap-1" role="tablist" aria-label="Wybór dnia">
         {dni.map((d) => {
           const dt = new Date(d + "T12:00:00");
@@ -66,6 +122,7 @@ function Wokanda() {
         })}
       </div>
 
+      {/* Filtry */}
       <div className="mb-4 grid gap-3 sm:grid-cols-2">
         <label className="text-xs font-bold text-primary">
           Wydział
@@ -90,6 +147,7 @@ function Wokanda() {
         </label>
       </div>
 
+      {/* Tabela wokandy */}
       <div className="overflow-x-auto">
         <table className="w-full border border-border text-sm">
           <thead>
@@ -116,7 +174,7 @@ function Wokanda() {
             {lista.length === 0 && (
               <tr>
                 <td colSpan={6} className="px-3 py-6 text-center text-muted-foreground">
-                  Brak spraw spełniających kryteria.
+                  {ladowanie ? "Wczytywanie spraw..." : "Brak spraw spełniających kryteria."}
                 </td>
               </tr>
             )}
