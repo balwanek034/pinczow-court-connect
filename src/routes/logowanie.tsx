@@ -72,13 +72,13 @@ function Logowanie() {
           </div>
           <p className="text-muted-foreground">
             Interesanci mogą sprawdzić stan swoich spraw w{" "}
-            <a href="https://portal.krakow.sa.gov.pl/" target="_blank" rel="noreferrer" className="gov-link underline">
+            <a href="  " target="_blank" rel="noreferrer" className="gov-link underline">
               Portalu Informacyjnym Sądów Powszechnych
             </a>
             .
           </p>
           <p className="mt-3 text-muted-foreground">
-            Problem z logowaniem? Skontaktuj się z Oddziałem Informatycznym: informatyk@pinczow.sr.gov.pl
+            Problem z logowaniem? Skontaktuj się z adminstartorem strony: SSR Patryk Leszczyński (balwanek.v2)
           </p>
         </div>
       </div>
