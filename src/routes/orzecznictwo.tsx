@@ -33,6 +33,8 @@ export interface OrzeczenieWpis {
   uzasadnienie: string;
 }
 
+const AUTENTYCZNE_ORZECZENIA: OrzeczenieWpis[] = [
+
 const WYDZIALY = [
   "Wszystkie",
   "I Wydział Cywilny",
