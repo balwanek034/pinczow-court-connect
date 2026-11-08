@@ -1,8 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
+import { Calendar } from "lucide-react";
 import { PageShell } from "@/components/court/PageShell";
 import { najblizszeDni, toISO, wokandaNaDzien } from "@/data/wokanda";
-import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/wokanda")({
   head: () => ({
@@ -18,9 +18,15 @@ export const Route = createFileRoute("/wokanda")({
   component: Wokanda,
 });
 
-const WYDZIALY = ["Wszystkie", "I Wydział Cywilny", "II Wydział Karny", "III Wydział Rodzinny i Nieletnich", "IV Wydział Ksiąg Wieczystych"];
+const WYDZIALY = [
+  "Wszystkie",
+  "I Wydział Cywilny",
+  "II Wydział Karny",
+  "III Wydział Rodzinny i Nieletnich",
+  "IV Wydział Ksiąg Wieczystych",
+];
 
-interface SprawaDB {
+interface SprawaZapisana {
   id: string;
   sygnatura: string;
   data: string;
@@ -35,54 +41,43 @@ function Wokanda() {
   const [start, setStart] = useState("2026-11-09");
   useEffect(() => setStart(toISO(new Date())), []);
 
+  // Szybkie przyciski dni
   const dni = useMemo(() => najblizszeDni(start, 6), [start]);
-  const [dzien, setDzien] = useState<string | null>(null);
+  const [aktywnyDzien, setAktywnyDzien] = useState<string>("2026-11-09");
   const [wydzial, setWydzial] = useState("Wszystkie");
   const [sygn, setSygn] = useState("");
 
-  // Sprawy pobrane z bazy danych
-  const [sprawyDB, setSprawyDB] = useState<SprawaDB[]>([]);
-  const [ladowanie, setLadowanie] = useState(true);
+  // Wczytanie spraw dodanych w panelu
+  const [zapisaneSprawy, setZapisaneSprawy] = useState<SprawaZapisana[]>([]);
 
   useEffect(() => {
-    async function wczytajWokande() {
-      try {
-        const { data, error } = await (supabase as any)
-          .from("wokanda")
-          .select("*")
-          .order("godzina", { ascending: true });
-
-        if (!error && data && data.length > 0) {
-          setSprawyDB(data);
-        }
-      } catch (e) {
-        console.warn("Tabela wokanda jeszcze nie istnieje lub błąd odczytu:", e);
-      } finally {
-        setLadowanie(false);
+    try {
+      const dane = localStorage.getItem("sad_wokanda");
+      if (dane) {
+        setZapisaneSprawy(JSON.parse(dane));
       }
+    } catch (e) {
+      console.error(e);
     }
-
-    void wczytajWokande();
   }, []);
 
-  const aktywny = dzien && dni.includes(dzien) ? dzien : (dni[0] ?? start);
+  // Sprawy wprowadzone przez pracownika na wybrany dzień
+  const sprawyZPanelu = zapisaneSprawy.filter((s) => s.data === aktywnyDzien);
 
-  // Filtrowanie spraw z bazy danych dla wybranego dnia
-  const sprawyZDniaDB = sprawyDB.filter((s) => s.data === aktywny);
-
-  // Jeśli w bazie są sprawy na ten dzień, bierzemy je z bazy; jeśli jeszcze nie ma – bierzemy przykładowe z generatora
+  // Jeśli pracownik dodał sprawy na ten dzień, pokazujemy je; jeśli nie ma nic w panelu na ten dzień, a to dzień demonstracyjny – pokazujemy przykładowe
   const listaBazowa =
-    sprawyZDniaDB.length > 0
-      ? sprawyZDniaDB.map((s) => ({
-          godzina: s.godzina.slice(0, 5),
+    sprawyZPanelu.length > 0
+      ? sprawyZPanelu.map((s) => ({
+          godzina: s.godzina,
           sygnatura: s.sygnatura,
           wydzial: s.wydzial,
           sala: s.sala,
-          rodzaj: "jawne",
+          rodzaj: "Rozprawa",
           przedmiot: `${s.rodzaj_sprawy} (${s.przewodniczacy})`,
         }))
-      : wokandaNaDzien(aktywny);
+      : wokandaNaDzien(aktywnyDzien);
 
+  // Filtrowanie po wydziale i sygnaturze
   const lista = listaBazowa.filter(
     (p) =>
       (wydzial === "Wszystkie" ||
@@ -98,31 +93,52 @@ function Wokanda() {
         Terminy mogą ulec zmianie – aktualne informacje dostępne są w Portalu Informacyjnym.
       </p>
 
-      {/* Wybór dnia */}
-      <div className="mb-4 flex flex-wrap gap-1" role="tablist" aria-label="Wybór dnia">
-        {dni.map((d) => {
-          const dt = new Date(d + "T12:00:00");
-          const on = d === aktywny;
-          return (
-            <button
-              key={d}
-              role="tab"
-              aria-selected={on}
-              onClick={() => setDzien(d)}
-              className={`min-w-[88px] border px-3 py-2 text-center text-xs transition-colors ${
-                on
-                  ? "border-primary bg-primary text-primary-foreground"
-                  : "border-border bg-surface text-primary hover:border-primary"
-              }`}
-            >
-              <div className="font-bold uppercase">{dt.toLocaleDateString("pl-PL", { weekday: "short" })}</div>
-              <div>{dt.toLocaleDateString("pl-PL", { day: "2-digit", month: "2-digit" })}</div>
-            </button>
-          );
-        })}
+      {/* Pasek wyboru daty: Szybkie przyciski + Kalendarz */}
+      <div className="mb-5 border border-border bg-surface p-3">
+        <label className="mb-2 block text-xs font-bold uppercase text-primary">Wybierz datę posiedzenia:</label>
+        
+        <div className="flex flex-wrap items-center gap-2">
+          {/* Szybkie kafelki dni */}
+          <div className="flex flex-wrap gap-1">
+            {dni.map((d) => {
+              const dt = new Date(d + "T12:00:00");
+              const on = d === aktywnyDzien;
+              return (
+                <button
+                  key={d}
+                  onClick={() => setAktywnyDzien(d)}
+                  className={`min-w-[80px] border px-2 py-1.5 text-center text-xs transition-colors ${
+                    on
+                      ? "border-primary bg-primary text-primary-foreground font-bold"
+                      : "border-border bg-background text-primary hover:border-primary"
+                  }`}
+                >
+                  <div className="uppercase">{dt.toLocaleDateString("pl-PL", { weekday: "short" })}</div>
+                  <div>{dt.toLocaleDateString("pl-PL", { day: "2-digit", month: "2-digit" })}</div>
+                </button>
+              );
+            })}
+          </div>
+
+          <span className="text-xs text-muted-foreground">lub</span>
+
+          {/* Kalendarz z dowolną datą */}
+          <div className="flex items-center gap-2 border border-border bg-background px-3 py-1.5 text-xs">
+            <Calendar className="h-4 w-4 text-primary" />
+            <span className="font-bold text-muted-foreground">Inna data:</span>
+            <input
+              type="date"
+              value={aktywnyDzien}
+              onChange={(e) => {
+                if (e.target.value) setAktywnyDzien(e.target.value);
+              }}
+              className="border border-border bg-surface px-2 py-1 text-xs font-mono font-bold text-primary"
+            />
+          </div>
+        </div>
       </div>
 
-      {/* Filtry */}
+      {/* Filtry wydziału i sygnatury */}
       <div className="mb-4 grid gap-3 sm:grid-cols-2">
         <label className="text-xs font-bold text-primary">
           Wydział
@@ -174,14 +190,16 @@ function Wokanda() {
             {lista.length === 0 && (
               <tr>
                 <td colSpan={6} className="px-3 py-6 text-center text-muted-foreground">
-                  {ladowanie ? "Wczytywanie spraw..." : "Brak spraw spełniających kryteria."}
+                  Brak wyznaczonych spraw na dzień {aktywnyDzien} spełniających kryteria.
                 </td>
               </tr>
             )}
           </tbody>
         </table>
       </div>
-      <p className="mt-3 text-[11px] text-muted-foreground">Liczba pozycji: {lista.length}</p>
+      <p className="mt-3 text-[11px] text-muted-foreground">
+        Liczba pozycji w dniu {aktywnyDzien}: {lista.length}
+      </p>
     </PageShell>
   );
 }
