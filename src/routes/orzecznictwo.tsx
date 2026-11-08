@@ -33,42 +33,6 @@ export interface OrzeczenieWpis {
   uzasadnienie: string;
 }
 
-const AUTENTYCZNE_ORZECZENIA: OrzeczenieWpis[] = [
-  {
-    id: "orz-1",
-    sygnatura: "Sygnatura akt I C 45/25",
-    data_orzeczenia: "31 lipca 2025 roku",
-    wydzial: "I Wydział Cywilny",
-    rodzaj: "Wyrok",
-    status_prawomocnosci: "PRAWOMOCNE",
-    sedzia: "sędzia Grzegorz Machynia",
-    protokolant: "starszy sekretarz sądowy Kinga Swat",
-    tryb: "na rozprawie",
-    strony: "sprawy z powództwa Skarbu Państwa - Starostwo Powiatowe w P. przeciwko (...) S.A. w K.",
-    przedmiot: "o rozwiązanie umowy użytkowania wieczystego i wydanie nieruchomości",
-    sentencja:
-      "rozwiązuje stosunek prawny użytkowania wieczystego działki gruntu stanowiącej własność Skarbu Państwa znajdującej się w użytkowaniu wieczystym na podstawie decyzji z dnia 31 stycznia 2005 roku (...) oznaczonej numerem ewidencyjnym o powierzchni 0,2024 ha będącej częścią nieruchomości dla której w Sądzie Rejonowym w Pińczowie IV Wydział Ksiąg Wieczystych prowadzona jest księga wieczysta i wydaje tę działkę gruntu właścicielowi Skarbowi Państwa.",
-    uzasadnienie:
-      "Pozwem z dnia 17 marca 2025 roku powód Skarb Państwa wniósł o rozwiązanie prawa użytkowania wieczystego ustanowionego na rzecz pozwanej spółki (...).\n\nW uzasadnieniu pozwu podniesiono, że pozwany nie korzystał z nieruchomości na cele określone w umowie o oddanie gruntu w użytkowanie wieczyste. Zgodnie z art. 240 k.c. umowa o oddanie gruntu Skarbu Państwa w użytkowanie wieczyste może ulec rozwiązaniu przed upływem określonego terminu, jeżeli wieczysty użytkownik korzysta z gruntu w sposób oczywiście sprzeczny z jego przeznaczeniem określonym w umowie.\n\nSąd Rejonowy po przeprowadzeniu postępowania dowodowego, w tym oględzin nieruchomości oraz analizy dokumentacji geodezyjnej ustalił, iż pozwany zaprzestał prowadzenia działalności kolejowej, a infrastruktura uległa degradacji. Wobec powyższego orzeczono jak w sentencji.",
-  },
-  {
-    id: "orz-2",
-    sygnatura: "Sygn. akt I Co 79/25",
-    data_orzeczenia: "21 lipca 2025 r.",
-    wydzial: "I Wydział Cywilny",
-    rodzaj: "Postanowienie",
-    status_prawomocnosci: "NIEPRAWOMOCNE",
-    sedzia: "SSR Katarzyna Kisiel",
-    tryb: "na posiedzeniu niejawnym",
-    strony: "sprawy z wniosku: (...) spółki z ograniczoną odpowiedzialnością z siedzibą w P. z udziałem: (...) spółki z o.o. w likwidacji",
-    przedmiot: "o udzielenie zabezpieczenia",
-    sentencja:
-      "w przedmiocie zażalenia uprawnionej na postanowienie z dnia 23 kwietnia 2025 r. postanawia: umorzyć postępowanie wywołane zażaleniem uprawnionej na postanowienie z dnia 23 kwietnia 2025 r.",
-    uzasadnienie:
-      "W dniu 23 kwietnia 2025 r. tutejszy Sąd wydał postanowienie w przedmiocie oddalenia wniosku o zabezpieczenie. Na powyższe postanowienie uprawniona wniosła zażalenie.\n\nW dniu 25 czerwca 2025 r. zaskarżone postanowienie zostało uchylone, a postępowanie w sprawie umorzone.\n\nSąd zważył, co następuje:\nZ dyspozycji przepisu art. 355 § 1 k.p.c. wynika, iż Sąd wydaje postanowienie o umorzeniu postępowania, jeżeli wydanie wyroku stało się z innych przyczyn zbędne lub niedopuszczalne. Z uwagi na fakt, iż zaskarżone postanowienie zostało wyeliminowane z obrotu prawnego, dalsze rozpoznawanie zażalenia stało się bezprzedmiotowe.",
-  },
-];
-
 const WYDZIALY = [
   "Wszystkie",
   "I Wydział Cywilny",
