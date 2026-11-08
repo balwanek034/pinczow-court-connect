@@ -32,4 +32,4 @@ use the editor.
 ## Project rules
 - Court site content (contact data, departments, news) lives in `src/data/`; pages read from there so facts stay in one place.
 - Shared page chrome: header/footer in `__root.tsx`, left menu + content frame in `components/court/PageShell.tsx`; new subpages use `PageShell` and must be added to `LeftMenu` with a real route.
-- Login panel is client-only demo (localStorage); real accounts would need Lovable Cloud auth.
+- Staff login uses Lovable Cloud auth; roles live in `user_roles` and every admin action re-checks `has_role` on the server, because the UI alone cannot be trusted. Accounts are created only by an admin (no public signup).
