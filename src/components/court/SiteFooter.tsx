@@ -2,12 +2,12 @@ import { Link } from "@tanstack/react-router";
 import { SAD } from "@/data/sad";
 
 const INSTYTUCJE = [
-  { label: "Sąd Okręgowy w Kielcach", href: "https://kielce.so.gov.pl" },
-  { label: "Sąd Apelacyjny w Krakowie", href: "https://www.krakow.sa.gov.pl" },
-  { label: "Ministerstwo Sprawiedliwości", href: "https://www.gov.pl/web/sprawiedliwosc" },
-  { label: "Portal Orzeczeń Sądów Powszechnych", href: "https://orzeczenia.ms.gov.pl" },
-  { label: "Elektroniczne Księgi Wieczyste", href: "https://ekw.ms.gov.pl" },
-  { label: "Krajowy Rejestr Karny", href: "https://ekrk.ms.gov.pl" },
+  { label: "Sąd Okręgowy w Kielcach", href: "" },
+  { label: "Sąd Apelacyjny w Krakowie", href: "" },
+  { label: "Ministerstwo Sprawiedliwości", href: "" },
+  { label: "Portal Orzeczeń Sądów Powszechnych", href: "" },
+  { label: "Elektroniczne Księgi Wieczyste", href: "" },
+  { label: "Krajowy Rejestr Karny", href: "" },
 ];
 
 export function SiteFooter() {
