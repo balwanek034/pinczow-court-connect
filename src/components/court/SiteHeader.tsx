@@ -87,7 +87,7 @@ export function SiteHeader() {
               <UserMenu />
             </div>
             <a
-              href="https://pinczow.sr.gov.pl"
+              href=""
               target="_blank"
               rel="noreferrer"
               aria-label="Biuletyn Informacji Publicznej"
