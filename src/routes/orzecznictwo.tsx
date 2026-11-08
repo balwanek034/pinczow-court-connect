@@ -35,7 +35,23 @@ export interface OrzeczenieWpis {
 
 const AUTENTYCZNE_ORZECZENIA: OrzeczenieWpis[] = [
   {
+    id: "orz-1",
+    sygnatura: "Sygnatura akt I C 45/25",
+    data_orzeczenia: "31 lipca 2025 roku",
+    wydzial: "I Wydział Cywilny",
+    rodzaj: "Wyrok",
+    status_prawomocnosci: "PRAWOMOCNE",
+    sedzia: "sędzia Grzegorz Machynia",
+    protokolant: "starszy sekretarz sądowy Kinga Swat",
+    tryb: "na rozprawie",
+    strony: "sprawy z powództwa Skarbu Państwa - Starostwo Powiatowe w P. przeciwko (...) S.A. w K.",
+    przedmiot: "o rozwiązanie umowy użytkowania wieczystego i wydanie nieruchomości",
+    sentencja:
+      "rozwiązuje stosunek prawny użytkowania wieczystego działki gruntu stanowiącej własność Skarbu Państwa znajdującej się w użytkowaniu wieczystym na podstawie decyzji z dnia 31 stycznia 2005 roku (...) oznaczonej numerem ewidencyjnym o powierzchni 0,2024 ha będącej częścią nieruchomości dla której w Sądzie Rejonowym w Pińczowie IV Wydział Ksiąg Wieczystych prowadzona jest księga wieczysta i wydaje tę działkę gruntu właścicielowi Skarbowi Państwa.",
+    uzasadnienie:
+      "Pozwem z dnia 17 marca 2025 roku powód Skarb Państwa wniósł o rozwiązanie prawa użytkowania wieczystego ustanowionego na rzecz pozwanej spółki (...).\n\nW uzasadnieniu pozwu podniesiono, że pozwany nie korzystał z nieruchomości na cele określone w umowie o oddanie gruntu w użytkowanie wieczyste. Zgodnie z art. 240 k.c. umowa o oddanie gruntu Skarbu Państwa w użytkowanie wieczyste może ulec rozwiązaniu przed upływem określonego terminu, jeżeli wieczysty użytkownik korzysta z gruntu w sposób oczywiście sprzeczny z jego przeznaczeniem określonym w umowie.\n\nSąd Rejonowy po przeprowadzeniu postępowania dowodowego, w tym oględzin nieruchomości oraz analizy dokumentacji geodezyjnej ustalił, iż pozwany zaprzestał prowadzenia działalności kolejowej, a infrastruktura uległa degradacji. Wobec powyższego orzeczono jak w sentencji.",
   },
+  
 const WYDZIALY = [
   "Wszystkie",
   "I Wydział Cywilny",
