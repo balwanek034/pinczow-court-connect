@@ -50,7 +50,6 @@ export function SiteFooter() {
       </div>
       <div className="border-t border-primary-foreground/15">
         <div className="mx-auto flex max-w-6xl flex-col gap-2 px-4 py-4 text-xs opacity-75 md:flex-row md:items-center md:justify-between">
-          <span>© 2026 {SAD.nazwa}. Wszelkie prawa zastrzeżone.</span>
           <span>
             Strona na potrzeby serwera Pińczów RP (STRONA FIKCYJNA):{" "}
             </a>
