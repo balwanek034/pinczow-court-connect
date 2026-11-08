@@ -1,7 +1,19 @@
 import { Link } from "@tanstack/react-router";
 import { SAD } from "@/data/sad";
 
-type Item = { label: string; to?: "/" | "/aktualnosci" | "/wydzialy" | "/wokanda" | "/kontakt" | "/logowanie" | "/struktura-organizacyjna"; href?: string };
+type Item = {
+  label: string;
+  to?:
+    | "/"
+    | "/aktualnosci"
+    | "/wydzialy"
+    | "/wokanda"
+    | "/kontakt"
+    | "/logowanie"
+    | "/struktura-organizacyjna"
+    | "/orzecznictwo";
+  href?: string;
+};
 
 const GROUPS: { title: string; bg: string; items: Item[] }[] = [
   {
@@ -26,9 +38,10 @@ const GROUPS: { title: string; bg: string; items: Item[] }[] = [
     items: [
       { label: "Logowanie pracowników", to: "/logowanie" },
       { label: "Portal Informacyjny", href: SAD.portal },
-      { label: "Elektroniczne Księgi Wieczyste", href: "" },
-      { label: "Orzecznictwo", href: "" },
-      { label: "Krajowy Rejestr Karny", href: "" },
+      { label: "Elektroniczne Księgi Wieczyste", href: "https://ekw.ms.gov.pl" },
+      // TUTAJ ZMIANA: Zamiast zewnętrznego href, kierujemy do podstrony portalu:
+      { label: "Orzecznictwo", to: "/orzecznictwo" },
+      { label: "Krajowy Rejestr Karny", href: "https://ekrk.ms.gov.pl" },
     ],
   },
 ];
