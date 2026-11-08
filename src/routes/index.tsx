@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
 import {
   ChevronRight,
   Clock,
@@ -19,6 +20,7 @@ import type { ReactNode } from "react";
 import budynek from "@/assets/budynek-sadu.jpg";
 import { AKTUALNOSCI, SAD, formatDataPL } from "@/data/sad";
 import { LeftMenu } from "@/components/court/LeftMenu";
+import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -63,7 +65,35 @@ function Tile({ icon, label, to, href }: { icon: ReactNode; label: string; to?: 
 }
 
 function Index() {
-  const lista = AKTUALNOSCI.slice(0, 5);
+  const [dbWpisy, setDbWpisy] = useState<any[]>([]);
+
+  useEffect(() => {
+    async function pobierzNajnowsze() {
+      try {
+        const { data, error } = await (supabase as any)
+          .from("aktualnosci")
+          .select("*")
+          .order("data", { ascending: false })
+          .limit(5);
+
+        if (!error && data && data.length > 0) {
+          setDbWpisy(data);
+        }
+      } catch (e) {
+        console.warn("Brak tabeli aktualnosci:", e);
+      }
+    }
+    void pobierzNajnowsze();
+  }, []);
+
+  const lista =
+    dbWpisy.length > 0
+      ? dbWpisy.map((w) => ({
+          id: w.id,
+          data: w.data,
+          tytul: w.tytul,
+        }))
+      : AKTUALNOSCI.slice(0, 5);
 
   return (
     <main id="tresc">
