@@ -8,13 +8,11 @@ import {
   ShieldCheck,
   Plus,
   Trash2,
-  AlertCircle,
   CheckCircle2,
 } from "lucide-react";
 import { PageShell } from "@/components/court/PageShell";
 import { useWyloguj } from "@/components/court/UserMenu";
 import { NAZWY_ROL, useAuth } from "@/hooks/useAuth";
-import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/_authenticated/panel")({
   head: () => ({
@@ -57,12 +55,10 @@ function Panel() {
   const { profil, user, role, isAdmin, isPracownik, loading } = useAuth();
   const wyloguj = useWyloguj();
 
-  // Zakładka: "wokanda" lub "aktualnosci"
   const [aktywnaZakladka, setAktywnaZakladka] = useState<"wokanda" | "aktualnosci">("wokanda");
 
-  // Stan dla wokandy
+  // Stan wokandy
   const [wokandy, setWokandy] = useState<WokandaItem[]>([]);
-  const [wokandaLoading, setWokandaLoading] = useState(false);
   const [sygnatura, setSygnatura] = useState("");
   const [dataSprawy, setDataSprawy] = useState("");
   const [godzina, setGodzina] = useState("");
@@ -71,127 +67,90 @@ function Panel() {
   const [sedzia, setSedzia] = useState("");
   const [rodzajSprawy, setRodzajSprawy] = useState("");
 
-  // Stan dla aktualności
+  // Stan ogłoszeń
   const [aktualnosci, setAktualnosci] = useState<AktualnoscItem[]>([]);
-  const [aktualnosciLoading, setAktualnosciLoading] = useState(false);
   const [tytul, setTytul] = useState("");
   const [kategoria, setKategoria] = useState("Komunikat");
   const [skrot, setSkrot] = useState("");
-  const [tresc, setTresc] = useState("");
 
-  const [komunikat, setKomunikat] = useState<{ typ: "sukces" | "blad"; tekst: string } | null>(null);
+  const [sukcesKomunikat, setSukcesKomunikat] = useState<string | null>(null);
 
-  // Pobranie danych
-  const pobierzWokande = async () => {
-    setWokandaLoading(true);
-    const { data, error } = await (supabase as any)
-      .from("wokanda")
-      .select("*")
-      .order("data", { ascending: false });
-    if (!error && data) setWokandy(data);
-    setWokandaLoading(false);
-  };
-
-  const pobierzAktualnosci = async () => {
-    setAktualnosciLoading(true);
-    const { data, error } = await (supabase as any)
-      .from("aktualnosci")
-      .select("*")
-      .order("data", { ascending: false });
-    if (!error && data) setAktualnosci(data);
-    setAktualnosciLoading(false);
-  };
-
+  // Wczytanie z pamięci przy starcie
   useEffect(() => {
-    if (isPracownik) {
-      void pobierzWokande();
-      void pobierzAktualnosci();
+    try {
+      const zapisaneWokandy = localStorage.getItem("sad_wokanda");
+      if (zapisaneWokandy) setWokandy(JSON.parse(zapisaneWokandy));
+
+      const zapisaneAktualnosci = localStorage.getItem("sad_aktualnosci");
+      if (zapisaneAktualnosci) setAktualnosci(JSON.parse(zapisaneAktualnosci));
+    } catch (e) {
+      console.error(e);
     }
-  }, [isPracownik]);
+  }, []);
 
   // Dodawanie sprawy do wokandy
-  const handleDodajWokande = async (e: React.FormEvent) => {
+  const handleDodajWokande = (e: React.FormEvent) => {
     e.preventDefault();
-    setKomunikat(null);
+    const nowaSprawa: WokandaItem = {
+      id: Date.now().toString(),
+      sygnatura,
+      data: dataSprawy,
+      godzina,
+      sala,
+      wydzial,
+      przewodniczacy: sedzia,
+      rodzaj_sprawy: rodzajSprawy,
+    };
 
-    const { error } = await (supabase as any).from("wokanda").insert([
-      {
-        sygnatura,
-        data: dataSprawy,
-        godzina,
-        sala,
-        wydzial,
-        przewodniczacy: sedzia,
-        rodzaj_sprawy: rodzajSprawy,
-      },
-    ]);
+    const nowaLista = [nowaSprawa, ...wokandy];
+    setWokandy(nowaLista);
+    localStorage.setItem("sad_wokanda", JSON.stringify(nowaLista));
 
-    if (error) {
-      setKomunikat({
-        typ: "blad",
-        tekst: "Błąd bazy: " + error.message + " (pamiętaj o utworzeniu tabeli w bazie)",
-      });
-    } else {
-      setKomunikat({ typ: "sukces", tekst: "Pomyślnie dodano sprawę do wokandy!" });
-      setSygnatura("");
-      setDataSprawy("");
-      setGodzina("");
-      setSala("");
-      setSedzia("");
-      setRodzajSprawy("");
-      void pobierzWokande();
-    }
+    setSukcesKomunikat("Pomyślnie dodano sprawę do wokandy!");
+    setSygnatura("");
+    setDataSprawy("");
+    setGodzina("");
+    setSala("");
+    setSedzia("");
+    setRodzajSprawy("");
+    setTimeout(() => setSukcesKomunikat(null), 4000);
   };
 
   // Usuwanie sprawy
-  const handleUsunWokande = async (id: string) => {
+  const handleUsunWokande = (id: string) => {
     if (!confirm("Czy na pewno chcesz usunąć tę sprawę z wokandy?")) return;
-    const { error } = await (supabase as any).from("wokanda").delete().eq("id", id);
-    if (error) {
-      alert("Błąd podczas usuwania: " + error.message);
-    } else {
-      void pobierzWokande();
-    }
+    const nowaLista = wokandy.filter((w) => w.id !== id);
+    setWokandy(nowaLista);
+    localStorage.setItem("sad_wokanda", JSON.stringify(nowaLista));
   };
 
   // Dodawanie ogłoszenia
-  const handleDodajAktualnosc = async (e: React.FormEvent) => {
+  const handleDodajAktualnosc = (e: React.FormEvent) => {
     e.preventDefault();
-    setKomunikat(null);
+    const nowyWpis: AktualnoscItem = {
+      id: Date.now().toString(),
+      tytul,
+      kategoria,
+      skrot,
+      data: new Date().toISOString().slice(0, 10),
+    };
 
-    const { error } = await (supabase as any).from("aktualnosci").insert([
-      {
-        tytul,
-        kategoria,
-        skrot,
-        tresc,
-        data: new Date().toISOString().slice(0, 10),
-      },
-    ]);
+    const nowaLista = [nowyWpis, ...aktualnosci];
+    setAktualnosci(nowaLista);
+    localStorage.setItem("sad_aktualnosci", JSON.stringify(nowaLista));
 
-    if (error) {
-      setKomunikat({
-        typ: "blad",
-        tekst: "Błąd bazy: " + error.message + " (pamiętaj o utworzeniu tabeli w bazie)",
-      });
-    } else {
-      setKomunikat({ typ: "sukces", tekst: "Pomyślnie opublikowano ogłoszenie!" });
-      setTytul("");
-      setSkrot("");
-      setTresc("");
-      void pobierzAktualnosci();
-    }
+    setSukcesKomunikat("Pomyślnie opublikowano ogłoszenie!");
+    setTytul("");
+    setSkrot("");
+    setTimeout(() => setSukcesKomunikat(null), 4000);
   };
 
   // Usuwanie ogłoszenia
-  const handleUsunAktualnosc = async (id: string) => {
+  const handleUsunAktualnosc = (id: string) => {
     if (!confirm("Czy na pewno chcesz usunąć to ogłoszenie?")) return;
-    const { error } = await (supabase as any).from("aktualnosci").delete().eq("id", id);
-    if (error) {
-      alert("Błąd podczas usuwania: " + error.message);
-    } else {
-      void pobierzAktualnosci();
-    }
+    const nowaLista = aktualnosci.filter((a) => a.id !== id);
+    setAktualnosci(nowaLista);
+    localStorage.setItem("sad_aktualnosci", JSON.stringify(nowaLista));
   };
 
   if (loading) {
@@ -218,7 +177,7 @@ function Panel() {
 
   return (
     <PageShell crumbs={["Panel pracownika"]} title="Panel pracownika">
-      {/* Nagłówek powitalny */}
+      {/* Nagłówek pracownika */}
       <div className="mb-6 flex flex-wrap items-center justify-between gap-3 bg-surface p-4">
         <div>
           <p className="font-serif text-lg text-primary">Witaj, {profil?.full_name || user?.email}</p>
@@ -234,7 +193,7 @@ function Panel() {
         </button>
       </div>
 
-      {/* Szybkie skróty */}
+      {/* Skróty */}
       <div className="mb-8 grid gap-3 sm:grid-cols-2">
         {isAdmin && (
           <Link to="/admin" className={KAFEL}>
@@ -242,31 +201,21 @@ function Panel() {
           </Link>
         )}
         <Link to="/wokanda" className={KAFEL}>
-          <CalendarDays className="h-7 w-7" /> Zobacz publiczną wokandę
+          <CalendarDays className="h-7 w-7" /> Przejdź do publicznej wokandy
         </Link>
         <Link to="/aktualnosci" className={KAFEL}>
-          <Megaphone className="h-7 w-7" /> Zobacz publiczne aktualności
+          <Megaphone className="h-7 w-7" /> Przejdź do publicznych aktualności
         </Link>
         <Link to="/wydzialy" className={KAFEL}>
           <Gavel className="h-7 w-7" /> Wydziały sądu
         </Link>
       </div>
 
-      {/* Komunikat o sukcesie lub błędzie */}
-      {komunikat && (
-        <div
-          className={`mb-6 flex items-center gap-2 border p-3 text-xs ${
-            komunikat.typ === "sukces"
-              ? "border-green-600 bg-green-50 text-green-900"
-              : "border-red-600 bg-red-50 text-red-900"
-          }`}
-        >
-          {komunikat.typ === "sukces" ? (
-            <CheckCircle2 className="h-4 w-4 text-green-600" />
-          ) : (
-            <AlertCircle className="h-4 w-4 text-red-600" />
-          )}
-          <span>{komunikat.tekst}</span>
+      {/* Komunikat o sukcesie */}
+      {sukcesKomunikat && (
+        <div className="mb-6 flex items-center gap-2 border border-green-600 bg-green-50 p-3 text-xs text-green-900">
+          <CheckCircle2 className="h-4 w-4 text-green-600" />
+          <span>{sukcesKomunikat}</span>
         </div>
       )}
 
@@ -275,7 +224,7 @@ function Panel() {
         <button
           onClick={() => {
             setAktywnaZakladka("wokanda");
-            setKomunikat(null);
+            setSukcesKomunikat(null);
           }}
           className={`px-4 py-2 font-serif text-sm font-bold transition-colors ${
             aktywnaZakladka === "wokanda"
@@ -288,7 +237,7 @@ function Panel() {
         <button
           onClick={() => {
             setAktywnaZakladka("aktualnosci");
-            setKomunikat(null);
+            setSukcesKomunikat(null);
           }}
           className={`px-4 py-2 font-serif text-sm font-bold transition-colors ${
             aktywnaZakladka === "aktualnosci"
@@ -300,7 +249,7 @@ function Panel() {
         </button>
       </div>
 
-      {/* SEKCJA WOKANDY */}
+      {/* ZARZĄDZANIE WOKANDĄ */}
       {aktywnaZakladka === "wokanda" && (
         <div className="space-y-6">
           <form onSubmit={handleDodajWokande} className="border border-border bg-surface p-4">
@@ -388,13 +337,11 @@ function Panel() {
             </button>
           </form>
 
-          {/* Tabela wprowadzonych spraw */}
+          {/* Tabela wpisów */}
           <div>
-            <h3 className="mb-2 font-serif text-sm font-bold text-primary">Sprawy w systemie:</h3>
-            {wokandaLoading ? (
-              <p className="text-xs text-muted-foreground">Ładowanie...</p>
-            ) : wokandy.length === 0 ? (
-              <p className="text-xs text-muted-foreground">Brak wpisów w bazie danych.</p>
+            <h3 className="mb-2 font-serif text-sm font-bold text-primary">Sprawy na wokandzie:</h3>
+            {wokandy.length === 0 ? (
+              <p className="text-xs text-muted-foreground">Brak wpisów. Wpisz dane powyżej i kliknij „Zapisz na wokandzie”.</p>
             ) : (
               <div className="overflow-x-auto border border-border">
                 <table className="w-full text-left text-xs">
@@ -420,7 +367,7 @@ function Panel() {
                         <td className="p-2">{w.przewodniczacy}</td>
                         <td className="p-2 text-right">
                           <button
-                            onClick={() => void handleUsunWokande(w.id)}
+                            onClick={() => handleUsunWokande(w.id)}
                             className="inline-flex items-center gap-1 text-red-600 hover:underline"
                           >
                             <Trash2 className="h-3 w-3" /> Usuń
@@ -436,7 +383,7 @@ function Panel() {
         </div>
       )}
 
-      {/* SEKCJA OGŁOSZEŃ */}
+      {/* ZARZĄDZANIE OGŁOSZENIAMI */}
       {aktywnaZakladka === "aktualnosci" && (
         <div className="space-y-6">
           <form onSubmit={handleDodajAktualnosc} className="border border-border bg-surface p-4">
@@ -468,23 +415,13 @@ function Panel() {
                 </div>
               </div>
               <div>
-                <label className="mb-1 block text-xs font-bold uppercase text-muted-foreground">Krótki opis (skrót)</label>
+                <label className="mb-1 block text-xs font-bold uppercase text-muted-foreground">Treść ogłoszenia</label>
                 <textarea
                   required
-                  rows={2}
+                  rows={3}
                   value={skrot}
                   onChange={(e) => setSkrot(e.target.value)}
-                  placeholder="Krótkie podsumowanie widoczne na liście aktualności..."
-                  className="w-full border border-border bg-background px-3 py-1.5 text-xs"
-                />
-              </div>
-              <div>
-                <label className="mb-1 block text-xs font-bold uppercase text-muted-foreground">Pełna treść</label>
-                <textarea
-                  rows={4}
-                  value={tresc}
-                  onChange={(e) => setTresc(e.target.value)}
-                  placeholder="Treść ogłoszenia (opcjonalnie)..."
+                  placeholder="Treść ogłoszenia..."
                   className="w-full border border-border bg-background px-3 py-1.5 text-xs"
                 />
               </div>
@@ -497,13 +434,11 @@ function Panel() {
             </button>
           </form>
 
-          {/* Tabela wprowadzonych ogłoszeń */}
+          {/* Tabela ogłoszeń */}
           <div>
             <h3 className="mb-2 font-serif text-sm font-bold text-primary">Opublikowane ogłoszenia:</h3>
-            {aktualnosciLoading ? (
-              <p className="text-xs text-muted-foreground">Ładowanie...</p>
-            ) : aktualnosci.length === 0 ? (
-              <p className="text-xs text-muted-foreground">Brak ogłoszeń w bazie danych.</p>
+            {aktualnosci.length === 0 ? (
+              <p className="text-xs text-muted-foreground">Brak ogłoszeń. Wypełnij formularz powyżej.</p>
             ) : (
               <div className="overflow-x-auto border border-border">
                 <table className="w-full text-left text-xs">
@@ -523,7 +458,7 @@ function Panel() {
                         <td className="p-2">{a.tytul}</td>
                         <td className="p-2 text-right">
                           <button
-                            onClick={() => void handleUsunAktualnosc(a.id)}
+                            onClick={() => handleUsunAktualnosc(a.id)}
                             className="inline-flex items-center gap-1 text-red-600 hover:underline"
                           >
                             <Trash2 className="h-3 w-3" /> Usuń
