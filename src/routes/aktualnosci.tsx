@@ -1,6 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
 import { PageShell } from "@/components/court/PageShell";
 import { AKTUALNOSCI, formatDataPL } from "@/data/sad";
+import { supabase } from "@/integrations/supabase/client";
 
 type Search = { q?: string | undefined };
 
@@ -21,12 +23,54 @@ export const Route = createFileRoute("/aktualnosci")({
   component: Aktualnosci,
 });
 
+interface AktualnoscDB {
+  id: string;
+  tytul: string;
+  data: string;
+  kategoria: string;
+  skrot: string;
+  tresc?: string;
+}
+
 function Aktualnosci() {
   const { q } = Route.useSearch();
   const fraza = q?.toLowerCase();
+
+  const [dbWpisy, setDbWpisy] = useState<AktualnoscDB[]>([]);
+
+  useEffect(() => {
+    async function wczytajWpisy() {
+      try {
+        const { data, error } = await (supabase as any)
+          .from("aktualnosci")
+          .select("*")
+          .order("data", { ascending: false });
+
+        if (!error && data && data.length > 0) {
+          setDbWpisy(data);
+        }
+      } catch (e) {
+        console.warn("Brak tabeli aktualnosci lub błąd odczytu:", e);
+      }
+    }
+    void wczytajWpisy();
+  }, []);
+
+  // Jeśli są wpisy z bazy danych, używamy ich; w przeciwnym razie używamy danych startowych
+  const wszystkieWpisy =
+    dbWpisy.length > 0
+      ? dbWpisy.map((w) => ({
+          id: w.id,
+          data: w.data,
+          kategoria: w.kategoria || "Komunikat",
+          tytul: w.tytul,
+          lead: w.skrot || w.tresc || "",
+        }))
+      : AKTUALNOSCI;
+
   const lista = fraza
-    ? AKTUALNOSCI.filter((a) => (a.tytul + " " + a.lead).toLowerCase().includes(fraza))
-    : AKTUALNOSCI;
+    ? wszystkieWpisy.filter((a) => (a.tytul + " " + a.lead).toLowerCase().includes(fraza))
+    : wszystkieWpisy;
 
   return (
     <PageShell crumbs={["Aktualności"]} title={q ? `Wyniki wyszukiwania: „${q}”` : "Aktualności"}>
@@ -56,11 +100,11 @@ function Aktualnosci() {
                 </tr>
                 <tr className="border-b border-border">
                   <td className="bg-muted px-2 py-1">Opublikował:</td>
-                  <td className="px-2 py-1">admin</td>
+                  <td className="px-2 py-1">Pracownik sądu</td>
                 </tr>
                 <tr>
                   <td className="bg-muted px-2 py-1">Publikacja w dniu:</td>
-                  <td className="px-2 py-1">{a.data} 10:{a.id.length % 50 + 10}:00</td>
+                  <td className="px-2 py-1">{a.data}</td>
                 </tr>
               </tbody>
             </table>
