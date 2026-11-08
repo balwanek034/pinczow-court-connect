@@ -21,7 +21,9 @@ export const Route = createFileRoute("/struktura-organizacyjna")({
 });
 
 function Struktura() {
-  const [prezes, wiceprezes, ...pozostali] = KIEROWNICTWO;
+  const prezes = KIEROWNICTWO[0];
+  const wiceprezes = KIEROWNICTWO[1];
+  const pozostali = KIEROWNICTWO.slice(2);
 
   return (
     <PageShell crumbs={["Działalność sądu", "Struktura organizacyjna"]} title="Struktura organizacyjna">
