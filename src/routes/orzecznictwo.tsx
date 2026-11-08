@@ -34,7 +34,9 @@ export interface OrzeczenieWpis {
 }
 
 const AUTENTYCZNE_ORZECZENIA: OrzeczenieWpis[] = [
-
+const AUTENTYCZNE_ORZECZENIA: OrzeczenieWpis[] = [
+  {
+  },
 const WYDZIALY = [
   "Wszystkie",
   "I Wydział Cywilny",
