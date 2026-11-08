@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState, useEffect, useMemo } from "react";
-import { Search, FileText, Gavel, Calendar } from "lucide-react";
+import { Search, FileText, Gavel, Calendar, ChevronDown, ChevronUp, Scale } from "lucide-react";
 import { PageShell } from "@/components/court/PageShell";
 import type { OrzeczenieItem } from "./_authenticated/panel";
 
@@ -27,7 +27,7 @@ const PRZYKLADOWE_ORZECZENIA: OrzeczenieItem[] = [
     rodzaj: "Wyrok",
     sedzia: "SSR Paweł Nowak",
     tytul: "O ochronę dóbr osobistych i zadośćuczynienie",
-    teza: "Publikacja nieprawdziwych informacji w przestrzeni publicznej narusza dobra osobiste podmiotu, rodząc obowiązek złożenia oświadczenia o przeprosinach oraz zapłaty zadośćuczynienia na cel społeczny.",
+    teza: "Sąd Rejonowy w Pińczowie I Wydział Cywilny po rozpoznaniu sprawy z powództwa Jana Kowalskiego przeciwko Tomaszowi Wiśniewskiemu o ochronę dóbr osobistych:\n\n1. Zobowiązuje pozwanego do usunięcia spornych wpisów w terminie 7 dni od uprawomocnienia się wyroku.\n2. Zasądza od pozwanego na rzecz Fundacji Pomocy Społecznej kwotę 5.000 zł tytułem zadośćuczynienia.\n\nUZASADNIENIE:\nPublikacja nieprawdziwych informacji w przestrzeni publicznej bezpośrednio godzi w dobra osobiste powoda, co uzasadnia zastosowanie środków ochrony prawnej przewidzianych w art. 24 k.c.",
   },
   {
     id: "demo-2",
@@ -37,7 +37,7 @@ const PRZYKLADOWE_ORZECZENIA: OrzeczenieItem[] = [
     rodzaj: "Wyrok",
     sedzia: "SSR Maria Kowalczyk",
     tytul: "Prowadzenie pojazdu w stanie nietrzeźwości (art. 178a § 1 k.k.)",
-    teza: "Stopień społecznej szkodliwości czynu uzasadnia orzeczenie zakazu prowadzenia wszelkich pojazdów mechanicznych na okres minimum 3 lat oraz obligatoryjne świadczenie pieniężne na Fundusz Pomocy Pokrzywdzonym.",
+    teza: "Sąd Rejonowy w Pińczowie II Wydział Karny uznaje oskarżonego za winnego popełnienia zarzucanego mu czynu z art. 178a § 1 k.k. i za to:\n\n1. Wymierza karę grzywny w wysokości 100 stawek dziennych przy ustaleniu wysokości jednej stawki na kwotę 40 zł.\n2. Orzeka zakaz prowadzenia wszelkich pojazdów mechanicznych na okres 3 lat.\n3. Zasądza świadczenie pieniężne na rzecz Funduszu Pomocy Pokrzywdzonym w kwocie 5.000 zł.\n\nUZASADNIENIE:\nWina oskarżonego oraz okoliczności popełnienia czynu nie budzą wątpliwości w świetle zebranego materiału dowodowego i badania alkomatem.",
   },
 ];
 
@@ -54,6 +54,9 @@ function Orzecznictwo() {
   const [szukaj, setSzukaj] = useState("");
   const [wybranyWydzial, setWybranyWydzial] = useState("Wszystkie");
   const [wybranyRodzaj, setWybranyRodzaj] = useState("Wszystkie");
+  
+  // Przechowuje ID aktualnie rozwiniętych orzeczeń
+  const [otwarteId, setOtwarteId] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
     try {
@@ -66,6 +69,13 @@ function Orzecznictwo() {
       console.error(e);
     }
   }, []);
+
+  const toggleRozwiniecie = (id: string) => {
+    setOtwarteId((prev) => ({
+      ...prev,
+      [id]: !prev[id],
+    }));
+  };
 
   const przefiltrowane = useMemo(() => {
     return orzeczenia.filter((o) => {
@@ -85,8 +95,7 @@ function Orzecznictwo() {
   return (
     <PageShell crumbs={["Baza orzecznictwa"]} title="Baza Orzeczeń Sądu Rejonowego w Pińczowie">
       <p className="mb-6 text-sm text-muted-foreground">
-        Lokalna baza wyroków, postanowień i rozstrzygnięć wydanych przez Sąd Rejonowy w Pińczowie, publikowana
-        zgodnie z przepisami o dostępie do informacji publicznej.
+        Lokalna baza wyroków, postanowień i rozstrzygnięć wydanych przez Sąd Rejonowy w Pińczowie. Kliknij w wybrane orzeczenie, aby otworzyć pełną treść dokumentu.
       </p>
 
       {/* Wyszukiwarka i filtry */}
@@ -150,37 +159,98 @@ function Orzecznictwo() {
         </div>
       ) : (
         <div className="space-y-4">
-          {przefiltrowane.map((o) => (
-            <article key={o.id} className="border border-border bg-surface p-5 transition-shadow hover:shadow-sm">
-              <div className="mb-2 flex flex-wrap items-center justify-between gap-2 border-b border-border/60 pb-2">
-                <div className="flex items-center gap-2">
-                  <span className="font-mono text-base font-bold text-primary">{o.sygnatura}</span>
-                  <span className="bg-primary px-2 py-0.5 text-[11px] font-bold uppercase text-primary-foreground">
-                    {o.rodzaj}
-                  </span>
-                  <span className="bg-muted px-2 py-0.5 text-[11px] font-medium text-foreground">
-                    {o.wydzial}
-                  </span>
-                </div>
-                <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                  <Calendar className="h-3.5 w-3.5" />
-                  <span>{o.data_orzeczenia}</span>
-                </div>
-              </div>
+          {przefiltrowane.map((o) => {
+            const czyOtwarte = !!otwarteId[o.id];
 
-              <h3 className="mb-2 font-serif text-base font-bold text-primary">{o.tytul}</h3>
+            return (
+              <article
+                key={o.id}
+                className="border border-border bg-surface transition-all hover:border-primary/50"
+              >
+                {/* Klikalny nagłówek orzeczenia */}
+                <button
+                  type="button"
+                  onClick={() => toggleRozwiniecie(o.id)}
+                  className="flex w-full cursor-pointer flex-col p-5 text-left transition-colors hover:bg-muted/10"
+                >
+                  <div className="mb-2 flex w-full flex-wrap items-center justify-between gap-2 border-b border-border/60 pb-2">
+                    <div className="flex items-center gap-2">
+                      <span className="font-mono text-base font-bold text-primary">{o.sygnatura}</span>
+                      <span className="bg-primary px-2 py-0.5 text-[11px] font-bold uppercase text-primary-foreground">
+                        {o.rodzaj}
+                      </span>
+                      <span className="bg-muted px-2 py-0.5 text-[11px] font-medium text-foreground">
+                        {o.wydzial}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                      <Calendar className="h-3.5 w-3.5" />
+                      <span>{o.data_orzeczenia}</span>
+                    </div>
+                  </div>
 
-              <div className="mb-3 flex items-center gap-2 text-xs text-muted-foreground">
-                <Gavel className="h-3.5 w-3.5" />
-                <span>Skład orzekający: <strong>{o.sedzia}</strong></span>
-              </div>
+                  <div className="flex w-full items-start justify-between gap-4">
+                    <div>
+                      <h3 className="font-serif text-base font-bold text-primary">{o.tytul}</h3>
+                      <div className="mt-1 flex items-center gap-2 text-xs text-muted-foreground">
+                        <Gavel className="h-3.5 w-3.5" />
+                        <span>
+                          Skład: <strong>{o.sedzia}</strong>
+                        </span>
+                      </div>
+                    </div>
 
-              <div className="rounded bg-muted/40 p-3 text-xs leading-relaxed text-foreground">
-                <p className="mb-1 font-bold uppercase tracking-wider text-muted-foreground">Teza / Uzasadnienie:</p>
-                <p className="italic">{o.teza}</p>
-              </div>
-            </article>
-          ))}
+                    <div className="flex shrink-0 items-center gap-1.5 rounded border border-primary/30 px-3 py-1.5 text-xs font-bold uppercase text-primary">
+                      <FileText className="h-4 w-4" />
+                      <span>{czyOtwarte ? "Zwiń orzeczenie" : "Zobacz orzeczenie"}</span>
+                      {czyOtwarte ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+                    </div>
+                  </div>
+                </button>
+
+                {/* Rozwijana treść dokumentu */}
+                {czyOtwarte && (
+                  <div className="border-t border-border bg-background p-6">
+                    {/* Urzędowa stylizacja dokumentu sądowego */}
+                    <div className="mx-auto max-w-2xl rounded border border-border bg-white p-6 shadow-sm font-serif text-foreground">
+                      <div className="mb-4 text-center">
+                        <Scale className="mx-auto mb-2 h-7 w-7 text-primary" />
+                        <p className="text-xs font-bold tracking-widest uppercase text-muted-foreground">
+                          Rzeczpospolita Polska
+                        </p>
+                        <h4 className="text-sm font-bold tracking-wider text-primary">
+                          W IMIENIU RZECZYPOSPOLITEJ POLSKIEJ
+                        </h4>
+                        <p className="mt-1 text-xs text-muted-foreground">
+                          Dnia {o.data_orzeczenia} r.
+                        </p>
+                      </div>
+
+                      <div className="mb-4 border-y border-border/60 py-3 text-xs leading-relaxed">
+                        <p><strong>Sąd:</strong> {o.wydzial} Sądu Rejonowego w Pińczowie</p>
+                        <p><strong>Sygnatura akt:</strong> <span className="font-mono font-bold">{o.sygnatura}</span></p>
+                        <p><strong>Przewodniczący / Skład:</strong> {o.sedzia}</p>
+                        <p><strong>Przedmiot sprawy:</strong> {o.tytul}</p>
+                      </div>
+
+                      <div className="space-y-3 font-sans text-xs leading-relaxed text-foreground">
+                        <p className="font-bold uppercase tracking-wider text-primary font-serif">
+                          Treść rozstrzygnięcia / Uzasadnienie:
+                        </p>
+                        <div className="whitespace-pre-line rounded bg-muted/30 p-4 font-mono text-[11px] leading-relaxed">
+                          {o.teza}
+                        </div>
+                      </div>
+
+                      <div className="mt-6 border-t border-border/60 pt-3 text-right text-[10px] text-muted-foreground font-sans">
+                        Opublikowano w portalu orzeczeń Sądu Rejonowego w Pińczowie
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </article>
+            );
+          })}
         </div>
       )}
     </PageShell>
