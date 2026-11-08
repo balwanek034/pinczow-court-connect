@@ -52,9 +52,7 @@ export function SiteFooter() {
         <div className="mx-auto flex max-w-6xl flex-col gap-2 px-4 py-4 text-xs opacity-75 md:flex-row md:items-center md:justify-between">
           <span>© 2026 {SAD.nazwa}. Wszelkie prawa zastrzeżone.</span>
           <span>
-            Serwis demonstracyjny, nieoficjalny. Oficjalna strona sądu:{" "}
-            <a href={SAD.oficjalnaStrona} target="_blank" rel="noreferrer" className="underline">
-              pinczow.sr.gov.pl
+            Strona na potrzeby serwera Pińczów RP (STRONA FIKCYJNA):{" "}
             </a>
           </span>
         </div>
