@@ -147,4 +147,41 @@ function Wokanda() {
 
       {/* Tabela wokandy */}
       <div className="overflow-x-auto">
-        <table className="
+        <table className="w-full border border-border text-sm">
+          <thead>
+            <tr className="bg-primary text-left text-xs uppercase tracking-wide text-primary-foreground">
+              <th className="px-3 py-2">Godz.</th>
+              <th className="px-3 py-2">Sygnatura</th>
+              <th className="px-3 py-2">Wydział</th>
+              <th className="px-3 py-2">Sala</th>
+              <th className="px-3 py-2">Przewodniczący</th>
+              <th className="px-3 py-2">Przedmiot</th>
+            </tr>
+          </thead>
+          <tbody>
+            {lista.map((p) => (
+              <tr key={p.id} className="border-t border-border even:bg-muted">
+                <td className="px-3 py-2 font-bold">{p.godzina}</td>
+                <td className="whitespace-nowrap px-3 py-2 font-bold text-primary">{p.sygnatura}</td>
+                <td className="px-3 py-2">{p.wydzial}</td>
+                <td className="px-3 py-2">{p.sala}</td>
+                <td className="px-3 py-2">{p.przewodniczacy}</td>
+                <td className="px-3 py-2">{p.rodzaj_sprawy}</td>
+              </tr>
+            ))}
+            {lista.length === 0 && (
+              <tr>
+                <td colSpan={6} className="px-3 py-6 text-center text-muted-foreground">
+                  Brak wyznaczonych spraw na dzień {aktywnyDzien}.
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
+      <p className="mt-3 text-[11px] text-muted-foreground">
+        Liczba pozycji w dniu {aktywnyDzien}: {lista.length}
+      </p>
+    </PageShell>
+  );
+}
