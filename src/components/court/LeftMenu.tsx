@@ -38,10 +38,10 @@ const GROUPS: { title: string; bg: string; items: Item[] }[] = [
     items: [
       { label: "Logowanie pracowników", to: "/logowanie" },
       { label: "Portal Informacyjny", href: SAD.portal },
-      { label: "Elektroniczne Księgi Wieczyste", href: "https://ekw.ms.gov.pl" },
+      { label: "Elektroniczne Księgi Wieczyste", href: "" },
       // TUTAJ ZMIANA: Zamiast zewnętrznego href, kierujemy do podstrony portalu:
       { label: "Orzecznictwo", to: "/orzecznictwo" },
-      { label: "Krajowy Rejestr Karny", href: "https://ekrk.ms.gov.pl" },
+      { label: "Krajowy Rejestr Karny", href: "" },
     ],
   },
 ];
