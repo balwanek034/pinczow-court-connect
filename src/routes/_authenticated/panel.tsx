@@ -9,6 +9,7 @@ import {
   Plus,
   Trash2,
   CheckCircle2,
+  FileText,
 } from "lucide-react";
 import { PageShell } from "@/components/court/PageShell";
 import { useWyloguj } from "@/components/court/UserMenu";
@@ -51,11 +52,22 @@ interface AktualnoscItem {
   skrot: string;
 }
 
+export interface OrzeczenieItem {
+  id: string;
+  sygnatura: string;
+  data_orzeczenia: string;
+  wydzial: string;
+  rodzaj: string;
+  sedzia: string;
+  tytul: string;
+  teza: string;
+}
+
 function Panel() {
   const { profil, user, role, isAdmin, isPracownik, loading } = useAuth();
   const wyloguj = useWyloguj();
 
-  const [aktywnaZakladka, setAktywnaZakladka] = useState<"wokanda" | "aktualnosci">("wokanda");
+  const [aktywnaZakladka, setAktywnaZakladka] = useState<"wokanda" | "aktualnosci" | "orzecznictwo">("wokanda");
 
   // Stan wokandy
   const [wokandy, setWokandy] = useState<WokandaItem[]>([]);
@@ -73,9 +85,19 @@ function Panel() {
   const [kategoria, setKategoria] = useState("Komunikat");
   const [skrot, setSkrot] = useState("");
 
+  // Stan orzecznictwa
+  const [orzeczenia, setOrzeczenia] = useState<OrzeczenieItem[]>([]);
+  const [orzSygnatura, setOrzSygnatura] = useState("");
+  const [orzData, setOrzData] = useState("");
+  const [orzWydzial, setOrzWydzial] = useState("I Wydział Cywilny");
+  const [orzRodzaj, setOrzRodzaj] = useState("Wyrok");
+  const [orzSedzia, setOrzSedzia] = useState("");
+  const [orzTytul, setOrzTytul] = useState("");
+  const [orzTeza, setOrzTeza] = useState("");
+
   const [sukcesKomunikat, setSukcesKomunikat] = useState<string | null>(null);
 
-  // Wczytanie z pamięci przy starcie
+  // Wczytanie z pamięci
   useEffect(() => {
     try {
       const zapisaneWokandy = localStorage.getItem("sad_wokanda");
@@ -83,15 +105,18 @@ function Panel() {
 
       const zapisaneAktualnosci = localStorage.getItem("sad_aktualnosci");
       if (zapisaneAktualnosci) setAktualnosci(JSON.parse(zapisaneAktualnosci));
+
+      const zapisaneOrzeczenia = localStorage.getItem("sad_orzeczenia");
+      if (zapisaneOrzeczenia) setOrzeczenia(JSON.parse(zapisaneOrzeczenia));
     } catch (e) {
       console.error(e);
     }
   }, []);
 
-  // Dodawanie sprawy do wokandy
+  // Obsługa Wokandy
   const handleDodajWokande = (e: React.FormEvent) => {
     e.preventDefault();
-    const nowaSprawa: WokandaItem = {
+    const nowa: WokandaItem = {
       id: Date.now().toString(),
       sygnatura,
       data: dataSprawy,
@@ -101,11 +126,9 @@ function Panel() {
       przewodniczacy: sedzia,
       rodzaj_sprawy: rodzajSprawy,
     };
-
-    const nowaLista = [nowaSprawa, ...wokandy];
-    setWokandy(nowaLista);
-    localStorage.setItem("sad_wokanda", JSON.stringify(nowaLista));
-
+    const lista = [nowa, ...wokandy];
+    setWokandy(lista);
+    localStorage.setItem("sad_wokanda", JSON.stringify(lista));
     setSukcesKomunikat("Pomyślnie dodano sprawę do wokandy!");
     setSygnatura("");
     setDataSprawy("");
@@ -116,41 +139,69 @@ function Panel() {
     setTimeout(() => setSukcesKomunikat(null), 4000);
   };
 
-  // Usuwanie sprawy
   const handleUsunWokande = (id: string) => {
     if (!confirm("Czy na pewno chcesz usunąć tę sprawę z wokandy?")) return;
-    const nowaLista = wokandy.filter((w) => w.id !== id);
-    setWokandy(nowaLista);
-    localStorage.setItem("sad_wokanda", JSON.stringify(nowaLista));
+    const lista = wokandy.filter((w) => w.id !== id);
+    setWokandy(lista);
+    localStorage.setItem("sad_wokanda", JSON.stringify(lista));
   };
 
-  // Dodawanie ogłoszenia
+  // Obsługa Aktualności
   const handleDodajAktualnosc = (e: React.FormEvent) => {
     e.preventDefault();
-    const nowyWpis: AktualnoscItem = {
+    const nowy: AktualnoscItem = {
       id: Date.now().toString(),
       tytul,
       kategoria,
       skrot,
       data: new Date().toISOString().slice(0, 10),
     };
-
-    const nowaLista = [nowyWpis, ...aktualnosci];
-    setAktualnosci(nowaLista);
-    localStorage.setItem("sad_aktualnosci", JSON.stringify(nowaLista));
-
+    const lista = [nowy, ...aktualnosci];
+    setAktualnosci(lista);
+    localStorage.setItem("sad_aktualnosci", JSON.stringify(lista));
     setSukcesKomunikat("Pomyślnie opublikowano ogłoszenie!");
     setTytul("");
     setSkrot("");
     setTimeout(() => setSukcesKomunikat(null), 4000);
   };
 
-  // Usuwanie ogłoszenia
   const handleUsunAktualnosc = (id: string) => {
     if (!confirm("Czy na pewno chcesz usunąć to ogłoszenie?")) return;
-    const nowaLista = aktualnosci.filter((a) => a.id !== id);
-    setAktualnosci(nowaLista);
-    localStorage.setItem("sad_aktualnosci", JSON.stringify(nowaLista));
+    const lista = aktualnosci.filter((a) => a.id !== id);
+    setAktualnosci(lista);
+    localStorage.setItem("sad_aktualnosci", JSON.stringify(lista));
+  };
+
+  // Obsługa Orzecznictwa
+  const handleDodajOrzeczenie = (e: React.FormEvent) => {
+    e.preventDefault();
+    const nowe: OrzeczenieItem = {
+      id: Date.now().toString(),
+      sygnatura: orzSygnatura,
+      data_orzeczenia: orzData,
+      wydzial: orzWydzial,
+      rodzaj: orzRodzaj,
+      sedzia: orzSedzia,
+      tytul: orzTytul,
+      teza: orzTeza,
+    };
+    const lista = [nowe, ...orzeczenia];
+    setOrzeczenia(lista);
+    localStorage.setItem("sad_orzeczenia", JSON.stringify(lista));
+    setSukcesKomunikat("Pomyślnie dodano orzeczenie do bazy!");
+    setOrzSygnatura("");
+    setOrzData("");
+    setOrzSedzia("");
+    setOrzTytul("");
+    setOrzTeza("");
+    setTimeout(() => setSukcesKomunikat(null), 4000);
+  };
+
+  const handleUsunOrzeczenie = (id: string) => {
+    if (!confirm("Czy na pewno chcesz usunąć to orzeczenie z bazy?")) return;
+    const lista = orzeczenia.filter((o) => o.id !== id);
+    setOrzeczenia(lista);
+    localStorage.setItem("sad_orzeczenia", JSON.stringify(lista));
   };
 
   if (loading) {
@@ -203,11 +254,11 @@ function Panel() {
         <Link to="/wokanda" className={KAFEL}>
           <CalendarDays className="h-7 w-7" /> Przejdź do publicznej wokandy
         </Link>
+        <Link to="/orzecznictwo" className={KAFEL}>
+          <FileText className="h-7 w-7" /> Przejdź do bazy orzecznictwa
+        </Link>
         <Link to="/aktualnosci" className={KAFEL}>
           <Megaphone className="h-7 w-7" /> Przejdź do publicznych aktualności
-        </Link>
-        <Link to="/wydzialy" className={KAFEL}>
-          <Gavel className="h-7 w-7" /> Wydziały sądu
         </Link>
       </div>
 
@@ -236,6 +287,19 @@ function Panel() {
         </button>
         <button
           onClick={() => {
+            setAktywnaZakladka("orzecznictwo");
+            setSukcesKomunikat(null);
+          }}
+          className={`px-4 py-2 font-serif text-sm font-bold transition-colors ${
+            aktywnaZakladka === "orzecznictwo"
+              ? "border-b-2 border-primary bg-surface text-primary"
+              : "text-muted-foreground hover:text-foreground"
+          }`}
+        >
+          Zarządzanie orzecznictwem
+        </button>
+        <button
+          onClick={() => {
             setAktywnaZakladka("aktualnosci");
             setSukcesKomunikat(null);
           }}
@@ -249,6 +313,154 @@ function Panel() {
         </button>
       </div>
 
+      {/* ZARZĄDZANIE ORZECZNICTWEM */}
+      {aktywnaZakladka === "orzecznictwo" && (
+        <div className="space-y-6">
+          <form onSubmit={handleDodajOrzeczenie} className="border border-border bg-surface p-4">
+            <h3 className="mb-4 font-serif text-base font-bold text-primary">Dodaj orzeczenie do bazy sądu</h3>
+            <div className="grid gap-3 sm:grid-cols-2 md:grid-cols-3">
+              <div>
+                <label className="mb-1 block text-xs font-bold uppercase text-muted-foreground">Sygnatura akt</label>
+                <input
+                  type="text"
+                  required
+                  placeholder="np. I C 145/26"
+                  value={orzSygnatura}
+                  onChange={(e) => setOrzSygnatura(e.target.value)}
+                  className="w-full border border-border bg-background px-3 py-1.5 text-sm"
+                />
+              </div>
+
+              <div>
+                <label className="mb-1 block text-xs font-bold uppercase text-muted-foreground">Data orzeczenia</label>
+                <input
+                  type="date"
+                  required
+                  value={orzData}
+                  onChange={(e) => setOrzData(e.target.value)}
+                  className="w-full border border-border bg-background px-3 py-1.5 text-sm"
+                />
+              </div>
+
+              <div>
+                <label className="mb-1 block text-xs font-bold uppercase text-muted-foreground">Rodzaj orzeczenia</label>
+                <select
+                  value={orzRodzaj}
+                  onChange={(e) => setOrzRodzaj(e.target.value)}
+                  className="w-full border border-border bg-background px-3 py-1.5 text-sm"
+                >
+                  <option value="Wyrok">Wyrok</option>
+                  <option value="Postanowienie">Postanowienie</option>
+                  <option value="Uchwała">Uchwała</option>
+                  <option value="Zarządzenie">Zarządzenie</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="mb-1 block text-xs font-bold uppercase text-muted-foreground">Wydział sądu</label>
+                <select
+                  value={orzWydzial}
+                  onChange={(e) => setOrzWydzial(e.target.value)}
+                  className="w-full border border-border bg-background px-3 py-1.5 text-sm"
+                >
+                  <option value="I Wydział Cywilny">I Wydział Cywilny</option>
+                  <option value="II Wydział Karny">II Wydział Karny</option>
+                  <option value="III Wydział Rodzinny i Nieletnich">III Wydział Rodzinny i Nieletnich</option>
+                  <option value="IV Wydział Ksiąg Wieczystych">IV Wydział Ksiąg Wieczystych</option>
+                </select>
+              </div>
+
+              <div className="md:col-span-2">
+                <label className="mb-1 block text-xs font-bold uppercase text-muted-foreground">Sędzia / Skład orzekający</label>
+                <input
+                  type="text"
+                  required
+                  placeholder="np. SSO Anna Nowak (przewodniczący)"
+                  value={orzSedzia}
+                  onChange={(e) => setOrzSedzia(e.target.value)}
+                  className="w-full border border-border bg-background px-3 py-1.5 text-sm"
+                />
+              </div>
+
+              <div className="sm:col-span-2 md:col-span-3">
+                <label className="mb-1 block text-xs font-bold uppercase text-muted-foreground">Przedmiot / Tytuł sprawy</label>
+                <input
+                  type="text"
+                  required
+                  placeholder="np. o zapłatę, o ochronę dóbr osobistych"
+                  value={orzTytul}
+                  onChange={(e) => setOrzTytul(e.target.value)}
+                  className="w-full border border-border bg-background px-3 py-1.5 text-sm"
+                />
+              </div>
+
+              <div className="sm:col-span-2 md:col-span-3">
+                <label className="mb-1 block text-xs font-bold uppercase text-muted-foreground">Teza / Sentencja / Uzasadnienie</label>
+                <textarea
+                  required
+                  rows={4}
+                  placeholder="Wpisz treść orzeczenia, tezę prawną lub fragment uzasadnienia..."
+                  value={orzTeza}
+                  onChange={(e) => setOrzTeza(e.target.value)}
+                  className="w-full border border-border bg-background px-3 py-1.5 text-sm"
+                />
+              </div>
+            </div>
+
+            <button
+              type="submit"
+              className="mt-4 inline-flex items-center gap-2 bg-primary px-4 py-2 text-xs font-bold uppercase text-primary-foreground hover:bg-primary/90"
+            >
+              <Plus className="h-4 w-4" /> Opublikuj orzeczenie
+            </button>
+          </form>
+
+          {/* Tabela orzeczeń */}
+          <div className="border border-border bg-surface p-4">
+            <h3 className="mb-3 font-serif text-base font-bold text-primary">
+              Wprowadzone orzeczenia ({orzeczenia.length})
+            </h3>
+            {orzeczenia.length === 0 ? (
+              <p className="text-xs text-muted-foreground">Brak wprowadzonych orzeczeń w bazie sądu.</p>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-xs">
+                  <thead className="border-b border-border bg-muted/40 font-bold uppercase text-muted-foreground">
+                    <tr>
+                      <th className="p-2">Sygnatura</th>
+                      <th className="p-2">Data</th>
+                      <th className="p-2">Rodzaj</th>
+                      <th className="p-2">Wydział</th>
+                      <th className="p-2">Sędzia</th>
+                      <th className="p-2 text-right">Akcja</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-border">
+                    {orzeczenia.map((o) => (
+                      <tr key={o.id} className="hover:bg-muted/20">
+                        <td className="p-2 font-mono font-bold">{o.sygnatura}</td>
+                        <td className="p-2">{o.data_orzeczenia}</td>
+                        <td className="p-2">{o.rodzaj}</td>
+                        <td className="p-2">{o.wydzial}</td>
+                        <td className="p-2">{o.sedzia}</td>
+                        <td className="p-2 text-right">
+                          <button
+                            onClick={() => handleUsunOrzeczenie(o.id)}
+                            className="inline-flex items-center gap-1 text-red-600 hover:underline"
+                          >
+                            <Trash2 className="h-3.5 w-3.5" /> Usuń
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
       {/* ZARZĄDZANIE WOKANDĄ */}
       {aktywnaZakladka === "wokanda" && (
         <div className="space-y-6">
@@ -258,13 +470,15 @@ function Panel() {
               <div>
                 <label className="mb-1 block text-xs font-bold uppercase text-muted-foreground">Sygnatura</label>
                 <input
+                  type="text"
                   required
+                  placeholder="np. I C 145/26"
                   value={sygnatura}
                   onChange={(e) => setSygnatura(e.target.value)}
-                  placeholder="np. I C 124/26"
-                  className="w-full border border-border bg-background px-3 py-1.5 text-xs"
+                  className="w-full border border-border bg-background px-3 py-1.5 text-sm"
                 />
               </div>
+
               <div>
                 <label className="mb-1 block text-xs font-bold uppercase text-muted-foreground">Data posiedzenia</label>
                 <input
@@ -272,9 +486,10 @@ function Panel() {
                   required
                   value={dataSprawy}
                   onChange={(e) => setDataSprawy(e.target.value)}
-                  className="w-full border border-border bg-background px-3 py-1.5 text-xs"
+                  className="w-full border border-border bg-background px-3 py-1.5 text-sm"
                 />
               </div>
+
               <div>
                 <label className="mb-1 block text-xs font-bold uppercase text-muted-foreground">Godzina</label>
                 <input
@@ -282,86 +497,95 @@ function Panel() {
                   required
                   value={godzina}
                   onChange={(e) => setGodzina(e.target.value)}
-                  className="w-full border border-border bg-background px-3 py-1.5 text-xs"
+                  className="w-full border border-border bg-background px-3 py-1.5 text-sm"
                 />
               </div>
+
               <div>
                 <label className="mb-1 block text-xs font-bold uppercase text-muted-foreground">Sala</label>
                 <input
+                  type="text"
                   required
+                  placeholder="np. Sala 104"
                   value={sala}
                   onChange={(e) => setSala(e.target.value)}
-                  placeholder="np. Sala 1"
-                  className="w-full border border-border bg-background px-3 py-1.5 text-xs"
+                  className="w-full border border-border bg-background px-3 py-1.5 text-sm"
                 />
               </div>
+
               <div>
                 <label className="mb-1 block text-xs font-bold uppercase text-muted-foreground">Wydział</label>
                 <select
                   value={wydzial}
                   onChange={(e) => setWydzial(e.target.value)}
-                  className="w-full border border-border bg-background px-3 py-1.5 text-xs"
+                  className="w-full border border-border bg-background px-3 py-1.5 text-sm"
                 >
-                  <option>I Wydział Cywilny</option>
-                  <option>II Wydział Karny</option>
-                  <option>III Wydział Rodzinny i Nieletnich</option>
-                  <option>IV Wydział Ksiąg Wieczystych</option>
+                  <option value="I Wydział Cywilny">I Wydział Cywilny</option>
+                  <option value="II Wydział Karny">II Wydział Karny</option>
+                  <option value="III Wydział Rodzinny i Nieletnich">III Wydział Rodzinny i Nieletnich</option>
+                  <option value="IV Wydział Ksiąg Wieczystych">IV Wydział Ksiąg Wieczystych</option>
                 </select>
               </div>
+
               <div>
                 <label className="mb-1 block text-xs font-bold uppercase text-muted-foreground">Przewodniczący</label>
                 <input
+                  type="text"
                   required
+                  placeholder="np. SSR Jan Kowalski"
                   value={sedzia}
                   onChange={(e) => setSedzia(e.target.value)}
-                  placeholder="np. SSR Anna Nowak"
-                  className="w-full border border-border bg-background px-3 py-1.5 text-xs"
+                  className="w-full border border-border bg-background px-3 py-1.5 text-sm"
                 />
               </div>
+
               <div className="sm:col-span-2 md:col-span-3">
-                <label className="mb-1 block text-xs font-bold uppercase text-muted-foreground">Przedmiot sprawy</label>
+                <label className="mb-1 block text-xs font-bold uppercase text-muted-foreground">Rodzaj sprawy / Przedmiot</label>
                 <input
+                  type="text"
                   required
+                  placeholder="np. o zapłatę, kradzież z włamaniem"
                   value={rodzajSprawy}
                   onChange={(e) => setRodzajSprawy(e.target.value)}
-                  placeholder="np. o zapłatę, o rozwód, z art. 177 k.k."
-                  className="w-full border border-border bg-background px-3 py-1.5 text-xs"
+                  className="w-full border border-border bg-background px-3 py-1.5 text-sm"
                 />
               </div>
             </div>
+
             <button
               type="submit"
-              className="mt-4 inline-flex items-center gap-2 bg-primary px-4 py-2 text-xs font-bold uppercase text-primary-foreground hover:opacity-90"
+              className="mt-4 inline-flex items-center gap-2 bg-primary px-4 py-2 text-xs font-bold uppercase text-primary-foreground hover:bg-primary/90"
             >
-              <Plus className="h-4 w-4" /> Zapisz na wokandzie
+              <Plus className="h-4 w-4" /> Dodaj do wokandy
             </button>
           </form>
 
-          {/* Tabela wpisów */}
-          <div>
-            <h3 className="mb-2 font-serif text-sm font-bold text-primary">Sprawy na wokandzie:</h3>
+          <div className="border border-border bg-surface p-4">
+            <h3 className="mb-3 font-serif text-base font-bold text-primary">
+              Wprowadzone sprawy ({wokandy.length})
+            </h3>
             {wokandy.length === 0 ? (
-              <p className="text-xs text-muted-foreground">Brak wpisów. Wpisz dane powyżej i kliknij „Zapisz na wokandzie”.</p>
+              <p className="text-xs text-muted-foreground">Brak wprowadzonych spraw.</p>
             ) : (
-              <div className="overflow-x-auto border border-border">
+              <div className="overflow-x-auto">
                 <table className="w-full text-left text-xs">
-                  <thead className="bg-surface font-serif text-primary">
+                  <thead className="border-b border-border bg-muted/40 font-bold uppercase text-muted-foreground">
                     <tr>
-                      <th className="p-2">Data i godz.</th>
                       <th className="p-2">Sygnatura</th>
+                      <th className="p-2">Data</th>
+                      <th className="p-2">Godz.</th>
                       <th className="p-2">Sala</th>
                       <th className="p-2">Wydział</th>
-                      <th className="p-2">Przewodniczący</th>
+                      <th className="p-2">Sędzia</th>
                       <th className="p-2 text-right">Akcja</th>
                     </tr>
                   </thead>
-                  <tbody>
+                  <tbody className="divide-y divide-border">
                     {wokandy.map((w) => (
-                      <tr key={w.id} className="border-t border-border hover:bg-surface/50">
-                        <td className="p-2 font-mono">
-                          {w.data} {w.godzina}
-                        </td>
-                        <td className="p-2 font-bold">{w.sygnatura}</td>
+                      <tr key={w.id} className="hover:bg-muted/20">
+                        <td className="p-2 font-mono font-bold">{w.sygnatura}</td>
+                        <td className="p-2">{w.data}</td>
+                        <td className="p-2">{w.godzina}</td>
                         <td className="p-2">{w.sala}</td>
                         <td className="p-2">{w.wydzial}</td>
                         <td className="p-2">{w.przewodniczacy}</td>
@@ -370,7 +594,7 @@ function Panel() {
                             onClick={() => handleUsunWokande(w.id)}
                             className="inline-flex items-center gap-1 text-red-600 hover:underline"
                           >
-                            <Trash2 className="h-3 w-3" /> Usuń
+                            <Trash2 className="h-3.5 w-3.5" /> Usuń
                           </button>
                         </td>
                       </tr>
@@ -388,86 +612,80 @@ function Panel() {
         <div className="space-y-6">
           <form onSubmit={handleDodajAktualnosc} className="border border-border bg-surface p-4">
             <h3 className="mb-4 font-serif text-base font-bold text-primary">Dodaj nowe ogłoszenie</h3>
-            <div className="space-y-3">
-              <div className="grid gap-3 sm:grid-cols-3">
-                <div className="sm:col-span-2">
-                  <label className="mb-1 block text-xs font-bold uppercase text-muted-foreground">Tytuł ogłoszenia</label>
-                  <input
-                    required
-                    value={tytul}
-                    onChange={(e) => setTytul(e.target.value)}
-                    placeholder="np. Zmiana godzin urzędowania Biura Obsługi Interesantów"
-                    className="w-full border border-border bg-background px-3 py-1.5 text-xs"
-                  />
-                </div>
-                <div>
-                  <label className="mb-1 block text-xs font-bold uppercase text-muted-foreground">Kategoria</label>
-                  <select
-                    value={kategoria}
-                    onChange={(e) => setKategoria(e.target.value)}
-                    className="w-full border border-border bg-background px-3 py-1.5 text-xs"
-                  >
-                    <option>Komunikat</option>
-                    <option>Ogłoszenie</option>
-                    <option>Konkurs</option>
-                    <option>Ważne</option>
-                  </select>
-                </div>
+            <div className="grid gap-3 sm:grid-cols-2">
+              <div className="sm:col-span-2">
+                <label className="mb-1 block text-xs font-bold uppercase text-muted-foreground">Tytuł ogłoszenia</label>
+                <input
+                  type="text"
+                  required
+                  placeholder="np. Zmiana godzin urzędowania Biura Obsługi Interesantów"
+                  value={tytul}
+                  onChange={(e) => setTytul(e.target.value)}
+                  className="w-full border border-border bg-background px-3 py-1.5 text-sm"
+                />
               </div>
+
               <div>
-                <label className="mb-1 block text-xs font-bold uppercase text-muted-foreground">Treść ogłoszenia</label>
+                <label className="mb-1 block text-xs font-bold uppercase text-muted-foreground">Kategoria</label>
+                <select
+                  value={kategoria}
+                  onChange={(e) => setKategoria(e.target.value)}
+                  className="w-full border border-border bg-background px-3 py-1.5 text-sm"
+                >
+                  <option value="Komunikat">Komunikat</option>
+                  <option value="Konkurs">Konkurs</option>
+                  <option value="Licytacja">Licytacja</option>
+                  <option value="Informacja prezesa">Informacja prezesa</option>
+                </select>
+              </div>
+
+              <div className="sm:col-span-2">
+                <label className="mb-1 block text-xs font-bold uppercase text-muted-foreground">Treść skrócona</label>
                 <textarea
                   required
                   rows={3}
+                  placeholder="Wpisz treść komunikatu lub ogłoszenia..."
                   value={skrot}
                   onChange={(e) => setSkrot(e.target.value)}
-                  placeholder="Treść ogłoszenia..."
-                  className="w-full border border-border bg-background px-3 py-1.5 text-xs"
+                  className="w-full border border-border bg-background px-3 py-1.5 text-sm"
                 />
               </div>
             </div>
+
             <button
               type="submit"
-              className="mt-4 inline-flex items-center gap-2 bg-primary px-4 py-2 text-xs font-bold uppercase text-primary-foreground hover:opacity-90"
+              className="mt-4 inline-flex items-center gap-2 bg-primary px-4 py-2 text-xs font-bold uppercase text-primary-foreground hover:bg-primary/90"
             >
               <Plus className="h-4 w-4" /> Opublikuj ogłoszenie
             </button>
           </form>
 
-          {/* Tabela ogłoszeń */}
-          <div>
-            <h3 className="mb-2 font-serif text-sm font-bold text-primary">Opublikowane ogłoszenia:</h3>
+          <div className="border border-border bg-surface p-4">
+            <h3 className="mb-3 font-serif text-base font-bold text-primary">
+              Opublikowane ogłoszenia ({aktualnosci.length})
+            </h3>
             {aktualnosci.length === 0 ? (
-              <p className="text-xs text-muted-foreground">Brak ogłoszeń. Wypełnij formularz powyżej.</p>
+              <p className="text-xs text-muted-foreground">Brak dodanych ogłoszeń.</p>
             ) : (
-              <div className="overflow-x-auto border border-border">
-                <table className="w-full text-left text-xs">
-                  <thead className="bg-surface font-serif text-primary">
-                    <tr>
-                      <th className="p-2">Data</th>
-                      <th className="p-2">Kategoria</th>
-                      <th className="p-2">Tytuł</th>
-                      <th className="p-2 text-right">Akcja</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {aktualnosci.map((a) => (
-                      <tr key={a.id} className="border-t border-border hover:bg-surface/50">
-                        <td className="p-2 font-mono">{a.data}</td>
-                        <td className="p-2 font-bold">{a.kategoria}</td>
-                        <td className="p-2">{a.tytul}</td>
-                        <td className="p-2 text-right">
-                          <button
-                            onClick={() => handleUsunAktualnosc(a.id)}
-                            className="inline-flex items-center gap-1 text-red-600 hover:underline"
-                          >
-                            <Trash2 className="h-3 w-3" /> Usuń
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+              <div className="divide-y divide-border">
+                {aktualnosci.map((a) => (
+                  <div key={a.id} className="flex items-start justify-between gap-4 py-3">
+                    <div>
+                      <span className="mr-2 inline-block bg-primary/10 px-2 py-0.5 text-[10px] font-bold uppercase text-primary">
+                        {a.kategoria}
+                      </span>
+                      <span className="text-xs text-muted-foreground">{a.data}</span>
+                      <h4 className="font-serif text-sm font-bold text-primary">{a.tytul}</h4>
+                      <p className="text-xs text-muted-foreground">{a.skrot}</p>
+                    </div>
+                    <button
+                      onClick={() => handleUsunAktualnosc(a.id)}
+                      className="inline-flex items-center gap-1 text-xs text-red-600 hover:underline"
+                    >
+                      <Trash2 className="h-3.5 w-3.5" /> Usuń
+                    </button>
+                  </div>
+                ))}
               </div>
             )}
           </div>
