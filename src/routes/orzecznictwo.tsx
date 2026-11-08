@@ -100,8 +100,8 @@ function Orzecznictwo() {
           tryb: "na rozprawie",
           strony: `w sprawie ${item.tytul || ""}`,
           przedmiot: item.tytul || "rozpoznania sprawy",
-          sentencja: item.teza || "Orzeczono zgodnie z wnioskiem.",
-          uzasadnienie: item.teza || "",
+sentencja: item.sentencja || item.teza || "Orzeczono zgodnie z wnioskiem.",
+uzasadnienie: item.uzasadnienie || "",
         }));
         setOrzeczenia([...zmapowane, ...AUTENTYCZNE_ORZECZENIA]);
       }
