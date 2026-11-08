@@ -98,7 +98,7 @@ export type Funkcja = { funkcja: string; osoba: string; opis: string; przyjecia?
 export const KIEROWNICTWO: [Funkcja, Funkcja, ...Funkcja[]] = [
   {
     funkcja: "Prezes Sądu Rejonowego w Pińczowie",
-    osoba: "SSR Anna Wójcik-Malec",
+    osoba: "SSR Tomasz Mrokowski",
     opis: "Kieruje sądem i reprezentuje go na zewnątrz, sprawuje nadzór administracyjny nad działalnością wydziałów oraz pełni czynności zwierzchnika służbowego sędziów i asesorów.",
     przyjecia: "Skargi i wnioski: poniedziałek 15:00 – 17:00, pok. nr 30, I piętro (ul. 3 Maja 12a)",
   },
