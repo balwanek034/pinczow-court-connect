@@ -18,9 +18,8 @@ import {
 } from "lucide-react";
 import type { ReactNode } from "react";
 import budynek from "@/assets/budynek-sadu.jpg";
-import { AKTUALNOSCI, SAD, formatDataPL } from "@/data/sad";
+import { SAD } from "@/data/sad";
 import { LeftMenu } from "@/components/court/LeftMenu";
-import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -64,36 +63,29 @@ function Tile({ icon, label, to, href }: { icon: ReactNode; label: string; to?: 
   );
 }
 
+interface AktualnoscItem {
+  id: string;
+  tytul: string;
+  data: string;
+  kategoria: string;
+  skrot: string;
+}
+
 function Index() {
-  const [dbWpisy, setDbWpisy] = useState<any[]>([]);
+  const [ogloszenia, setOgloszenia] = useState<AktualnoscItem[]>([]);
 
   useEffect(() => {
-    async function pobierzNajnowsze() {
-      try {
-        const { data, error } = await (supabase as any)
-          .from("aktualnosci")
-          .select("*")
-          .order("data", { ascending: false })
-          .limit(5);
-
-        if (!error && data && data.length > 0) {
-          setDbWpisy(data);
-        }
-      } catch (e) {
-        console.warn("Brak tabeli aktualnosci:", e);
+    try {
+      const zapisane = localStorage.getItem("sad_aktualnosci");
+      if (zapisane) {
+        setOgloszenia(JSON.parse(zapisane));
       }
+    } catch (e) {
+      console.error(e);
     }
-    void pobierzNajnowsze();
   }, []);
 
-  const lista =
-    dbWpisy.length > 0
-      ? dbWpisy.map((w) => ({
-          id: w.id,
-          data: w.data,
-          tytul: w.tytul,
-        }))
-      : AKTUALNOSCI.slice(0, 5);
+  const lista = ogloszenia.slice(0, 5);
 
   return (
     <main id="tresc">
@@ -113,31 +105,39 @@ function Index() {
           <h2 id="akt" className="section-title">
             <MessageSquareText className="h-6 w-6 fill-primary text-surface" /> Aktualności
           </h2>
-          <ul className="space-y-2.5">
-            {lista.map((a) => (
-              <li key={a.id} className="bg-tile p-4">
-                <p className="mb-1 text-[11px] text-muted-foreground">{formatDataPL(a.data)}</p>
-                <Link
-                  to="/aktualnosci"
-                  hash={a.id}
-                  className="font-serif text-[17px] leading-snug text-primary hover:underline"
-                >
-                  {a.tytul} <ChevronRight className="inline h-4 w-4" />
-                </Link>
-                <div className="mt-3">
+
+          {lista.length === 0 ? (
+            <div className="bg-tile p-4 text-xs text-muted-foreground">
+              Brak bieżących komunikatów. Nowe ogłoszenia dodasz w Panelu pracownika.
+            </div>
+          ) : (
+            <ul className="space-y-2.5">
+              {lista.map((a) => (
+                <li key={a.id} className="bg-tile p-4">
+                  <p className="mb-1 text-[11px] text-muted-foreground">{a.data}</p>
                   <Link
                     to="/aktualnosci"
                     hash={a.id}
-                    className="inline-flex items-center gap-1 rounded-full border border-border bg-surface px-3 py-1.5 text-[11px] uppercase text-primary hover:border-primary"
+                    className="font-serif text-[17px] leading-snug text-primary hover:underline"
                   >
-                    Więcej <ChevronRight className="h-3 w-3" />
+                    {a.tytul} <ChevronRight className="inline h-4 w-4" />
                   </Link>
-                </div>
-              </li>
-            ))}
-          </ul>
+                  <div className="mt-3">
+                    <Link
+                      to="/aktualnosci"
+                      hash={a.id}
+                      className="inline-flex items-center gap-1 rounded-full border border-border bg-surface px-3 py-1.5 text-[11px] uppercase text-primary hover:border-primary"
+                    >
+                      Więcej <ChevronRight className="h-3 w-3" />
+                    </Link>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          )}
+
           <Link to="/aktualnosci" className="mt-4 inline-block text-sm uppercase text-primary hover:underline">
-            Archiwum aktualności »
+            Wszystkie aktualności »
           </Link>
         </section>
 
