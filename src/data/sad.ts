@@ -5,17 +5,16 @@ export const SAD = {
   nadrzedny: "Sąd Okręgowy w Kielcach",
   apelacja: "Apelacja krakowska",
   adres: "ul. 3 Maja 12a",
-  adresKarny: "ul. 1 Maja 10",
   kod: "28-400 Pińczów",
-  centrala: "(41) 357-22-35",
-  informacja: "(41) 246-22-01",
-  faksAdm: "(41) 246-22-12",
-  faksKarny: "(41) 246-22-52",
-  email: "administracja@pinczow.sr.gov.pl",
+  centrala: "",
+  informacja: "",
+  faksAdm: "",
+  faksKarny: "",
+  email: "",
   nip: "662-181-85-10",
   regon: "000322293-00068",
-  oficjalnaStrona: "https://pinczow.sr.gov.pl",
-  portal: "https://portal.krakow.sa.gov.pl/",
+  oficjalnaStrona: "",
+  portal: "",
 };
 
 export const GODZINY = [
@@ -40,15 +39,11 @@ export type Wydzial = {
 export const WYDZIALY: Wydzial[] = [
   {
     id: "cywilny",
-    przewodniczacy: "SSR Katarzyna Zając",
+    przewodniczacy: "vacat",
     numer: "I",
     nazwa: "Wydział Cywilny",
     skrot: "C",
-    sekretariat: "pok. nr 23, I piętro",
     adres: "ul. 3 Maja 12a",
-    tel: "(41) 246-22-16",
-    faks: "(41) 246-22-12",
-    email: "cywilny@pinczow.sr.gov.pl",
     wlasciwosc:
       "Rozpoznawanie spraw cywilnych w I instancji, w tym spraw o zapłatę, z zakresu prawa pracy, spadkowych, nieprocesowych oraz postępowanie zabezpieczające i egzekucyjne.",
   },
