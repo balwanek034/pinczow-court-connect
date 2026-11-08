@@ -142,7 +142,7 @@ function Index() {
             className="flex flex-col items-center gap-3 bg-primary px-6 py-6 text-center font-serif text-[15px] text-primary-foreground hover:bg-crimson-dark"
           >
             <LogIn className="h-10 w-10" strokeWidth={1.5} />
-            Panel interesanta – zaloguj się, aby sprawdzić swoje sprawy
+            Logowanie pracowników – system wewnętrzny sądu
           </Link>
           <Link
             to="/kontakt"

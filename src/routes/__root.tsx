@@ -14,6 +14,7 @@ import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { SiteHeader } from "@/components/court/SiteHeader";
 import { SiteFooter } from "@/components/court/SiteFooter";
+import { AuthProvider } from "@/hooks/useAuth";
 
 function NotFoundComponent() {
   return (
@@ -119,13 +120,15 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <div className="flex min-h-screen flex-col">
-        <SiteHeader />
-        <div className="flex-1">
-          <Outlet />
+      <AuthProvider>
+        <div className="flex min-h-screen flex-col">
+          <SiteHeader />
+          <div className="flex-1">
+            <Outlet />
+          </div>
+          <SiteFooter />
         </div>
-        <SiteFooter />
-      </div>
+      </AuthProvider>
     </QueryClientProvider>
   );
 }
