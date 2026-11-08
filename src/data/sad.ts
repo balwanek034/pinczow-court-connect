@@ -33,12 +33,14 @@ export type Wydzial = {
   tel: string;
   faks: string;
   email: string;
+  przewodniczacy: string;
   wlasciwosc: string;
 };
 
 export const WYDZIALY: Wydzial[] = [
   {
     id: "cywilny",
+    przewodniczacy: "SSR Katarzyna Zając",
     numer: "I",
     nazwa: "Wydział Cywilny",
     skrot: "C",
@@ -52,6 +54,7 @@ export const WYDZIALY: Wydzial[] = [
   },
   {
     id: "karny",
+    przewodniczacy: "SSR Marcin Dziedzic",
     numer: "II",
     nazwa: "Wydział Karny",
     skrot: "K",
@@ -65,6 +68,7 @@ export const WYDZIALY: Wydzial[] = [
   },
   {
     id: "rodzinny",
+    przewodniczacy: "SSR Joanna Pawlik",
     numer: "III",
     nazwa: "Wydział Rodzinny i Nieletnich",
     skrot: "RC / Nkd",
@@ -78,6 +82,7 @@ export const WYDZIALY: Wydzial[] = [
   },
   {
     id: "ksiegi",
+    przewodniczacy: "SSR Ewa Bednarska",
     numer: "IV",
     nazwa: "Wydział Ksiąg Wieczystych",
     skrot: "Kw",
@@ -88,6 +93,29 @@ export const WYDZIALY: Wydzial[] = [
     email: "ksiegi@pinczow.sr.gov.pl",
     wlasciwosc:
       "Prowadzenie ksiąg wieczystych dla nieruchomości położonych na obszarze właściwości Sądu, zakładanie ksiąg, dokonywanie wpisów oraz wydawanie odpisów i wyciągów.",
+  },
+];
+
+// Imiona i nazwiska kierownictwa są przykładowe (strona demonstracyjna).
+export type Funkcja = { funkcja: string; osoba: string; opis: string; przyjecia?: string };
+
+export const KIEROWNICTWO: Funkcja[] = [
+  {
+    funkcja: "Prezes Sądu Rejonowego w Pińczowie",
+    osoba: "SSR Anna Wójcik-Malec",
+    opis: "Kieruje sądem i reprezentuje go na zewnątrz, sprawuje nadzór administracyjny nad działalnością wydziałów oraz pełni czynności zwierzchnika służbowego sędziów i asesorów.",
+    przyjecia: "Skargi i wnioski: poniedziałek 15:00 – 17:00, pok. nr 30, I piętro (ul. 3 Maja 12a)",
+  },
+  {
+    funkcja: "Wiceprezes Sądu Rejonowego w Pińczowie",
+    osoba: "SSR Tomasz Kubicki",
+    opis: "Zastępuje Prezesa Sądu w czasie jego nieobecności oraz wykonuje czynności z zakresu nadzoru administracyjnego powierzone zarządzeniem Prezesa.",
+    przyjecia: "W zastępstwie Prezesa – w tych samych godzinach, pok. nr 30",
+  },
+  {
+    funkcja: "Kierownik Finansowy",
+    osoba: "mgr Beata Sobczyk",
+    opis: "Kieruje działalnością administracyjną i finansową sądu, w tym gospodarką finansową, majątkiem i inwestycjami.",
   },
 ];
 

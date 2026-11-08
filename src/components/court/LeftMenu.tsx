@@ -1,7 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { SAD } from "@/data/sad";
 
-type Item = { label: string; to?: "/" | "/aktualnosci" | "/wydzialy" | "/wokanda" | "/kontakt" | "/logowanie"; href?: string };
+type Item = { label: string; to?: "/" | "/aktualnosci" | "/wydzialy" | "/wokanda" | "/kontakt" | "/logowanie" | "/struktura-organizacyjna"; href?: string };
 
 const GROUPS: { title: string; bg: string; items: Item[] }[] = [
   {
@@ -15,7 +15,8 @@ const GROUPS: { title: string; bg: string; items: Item[] }[] = [
     items: [
       { label: "Godziny urzędowania", to: "/kontakt" },
       { label: "Kontakt", to: "/kontakt" },
-      { label: "Struktura organizacyjna", to: "/wydzialy" },
+      { label: "Struktura organizacyjna", to: "/struktura-organizacyjna" },
+      { label: "Wydziały", to: "/wydzialy" },
       { label: "Wokanda", to: "/wokanda" },
     ],
   },
@@ -23,7 +24,7 @@ const GROUPS: { title: string; bg: string; items: Item[] }[] = [
     title: "Obsługa interesanta",
     bg: "bg-menu-3",
     items: [
-      { label: "Panel interesanta (logowanie)", to: "/logowanie" },
+      { label: "Logowanie pracowników", to: "/logowanie" },
       { label: "Portal Informacyjny", href: SAD.portal },
       { label: "Elektroniczne Księgi Wieczyste", href: "https://ekw.ms.gov.pl" },
       { label: "Orzecznictwo", href: "https://orzeczenia.ms.gov.pl" },
