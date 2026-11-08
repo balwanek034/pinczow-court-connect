@@ -49,7 +49,7 @@ export const WYDZIALY: Wydzial[] = [
   },
   {
     id: "karny",
-    przewodniczacy: "SSR Marcin Dziedzic",
+    przewodniczacy: "vacat",
     numer: "II",
     nazwa: "Wydział Karny",
     skrot: "K",
@@ -63,7 +63,7 @@ export const WYDZIALY: Wydzial[] = [
   },
   {
     id: "rodzinny",
-    przewodniczacy: "SSR Joanna Pawlik",
+    przewodniczacy: "vacat",
     numer: "III",
     nazwa: "Wydział Rodzinny i Nieletnich",
     skrot: "RC / Nkd",
@@ -77,7 +77,7 @@ export const WYDZIALY: Wydzial[] = [
   },
   {
     id: "ksiegi",
-    przewodniczacy: "SSR Ewa Bednarska",
+    przewodniczacy: "vacat",
     numer: "IV",
     nazwa: "Wydział Ksiąg Wieczystych",
     skrot: "Kw",
@@ -104,13 +104,13 @@ export const KIEROWNICTWO: [Funkcja, Funkcja, ...Funkcja[]] = [
   },
   {
     funkcja: "Wiceprezes Sądu Rejonowego w Pińczowie",
-    osoba: "SSR Tomasz Kubicki",
+    osoba: "vacat",
     opis: "Zastępuje Prezesa Sądu w czasie jego nieobecności oraz wykonuje czynności z zakresu nadzoru administracyjnego powierzone zarządzeniem Prezesa.",
     przyjecia: "W zastępstwie Prezesa – w tych samych godzinach, pok. nr 30",
   },
   {
     funkcja: "Kierownik Finansowy",
-    osoba: "mgr Beata Sobczyk",
+    osoba: "vacat",
     opis: "Kieruje działalnością administracyjną i finansową sądu, w tym gospodarką finansową, majątkiem i inwestycjami.",
   },
 ];
