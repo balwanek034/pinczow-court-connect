@@ -1,8 +1,9 @@
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState, type FormEvent } from "react";
-import { LogIn, Menu, Search, SunMoon, Type, X } from "lucide-react";
+import { Menu, Search, SunMoon, Type, X } from "lucide-react";
 import godlo from "@/assets/godlo.png";
 import { LeftMenuLinks } from "@/components/court/LeftMenu";
+import { UserMenu } from "@/components/court/UserMenu";
 
 const SIZES = ["16px", "18px", "20px"];
 
@@ -82,12 +83,9 @@ export function SiteHeader() {
             </div>
           </div>
           <div className="mt-3 flex items-center gap-4">
-            <Link
-              to="/logowanie"
-              className="hidden items-center gap-1.5 border border-primary px-3 py-1.5 text-xs font-bold uppercase text-primary hover:bg-primary hover:text-primary-foreground md:flex"
-            >
-              <LogIn className="h-4 w-4" /> Zaloguj się
-            </Link>
+            <div className="hidden md:block">
+              <UserMenu />
+            </div>
             <a
               href="https://pinczow.sr.gov.pl"
               target="_blank"
@@ -121,10 +119,8 @@ export function SiteHeader() {
             >
               Czcionka
             </button>
-            <Link to="/logowanie" onClick={() => setOpen(false)} className="border border-primary px-3 py-2 text-primary">
-              Zaloguj się
-            </Link>
           </div>
+          <UserMenu />
           <LeftMenuLinks onNavigate={() => setOpen(false)} />
         </div>
       )}
