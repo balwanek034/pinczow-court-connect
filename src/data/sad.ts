@@ -99,7 +99,8 @@ export const WYDZIALY: Wydzial[] = [
 // Imiona i nazwiska kierownictwa są przykładowe (strona demonstracyjna).
 export type Funkcja = { funkcja: string; osoba: string; opis: string; przyjecia?: string };
 
-export const KIEROWNICTWO: Funkcja[] = [
+// Kolejność: Prezes, Wiceprezes, pozostali.
+export const KIEROWNICTWO: [Funkcja, Funkcja, ...Funkcja[]] = [
   {
     funkcja: "Prezes Sądu Rejonowego w Pińczowie",
     osoba: "SSR Anna Wójcik-Malec",
