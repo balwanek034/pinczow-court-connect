@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { Calendar } from "lucide-react";
 import { PageShell } from "@/components/court/PageShell";
-import { najblizszeDni, toISO, wokandaNaDzien } from "@/data/wokanda";
+import { najblizszeDni, toISO } from "@/data/wokanda";
 
 export const Route = createFileRoute("/wokanda")({
   head: () => ({
@@ -41,13 +41,11 @@ function Wokanda() {
   const [start, setStart] = useState("2026-11-09");
   useEffect(() => setStart(toISO(new Date())), []);
 
-  // Szybkie przyciski dni
   const dni = useMemo(() => najblizszeDni(start, 6), [start]);
   const [aktywnyDzien, setAktywnyDzien] = useState<string>("2026-11-09");
   const [wydzial, setWydzial] = useState("Wszystkie");
   const [sygn, setSygn] = useState("");
 
-  // Wczytanie spraw dodanych w panelu
   const [zapisaneSprawy, setZapisaneSprawy] = useState<SprawaZapisana[]>([]);
 
   useEffect(() => {
@@ -61,24 +59,10 @@ function Wokanda() {
     }
   }, []);
 
-  // Sprawy wprowadzone przez pracownika na wybrany dzień
-  const sprawyZPanelu = zapisaneSprawy.filter((s) => s.data === aktywnyDzien);
+  // Tylko sprawy wprowadzone przez pracowników w panelu
+  const sprawyZDnia = zapisaneSprawy.filter((s) => s.data === aktywnyDzien);
 
-  // Jeśli pracownik dodał sprawy na ten dzień, pokazujemy je; jeśli nie ma nic w panelu na ten dzień, a to dzień demonstracyjny – pokazujemy przykładowe
-  const listaBazowa =
-    sprawyZPanelu.length > 0
-      ? sprawyZPanelu.map((s) => ({
-          godzina: s.godzina,
-          sygnatura: s.sygnatura,
-          wydzial: s.wydzial,
-          sala: s.sala,
-          rodzaj: "Rozprawa",
-          przedmiot: `${s.rodzaj_sprawy} (${s.przewodniczacy})`,
-        }))
-      : wokandaNaDzien(aktywnyDzien);
-
-  // Filtrowanie po wydziale i sygnaturze
-  const lista = listaBazowa.filter(
+  const lista = sprawyZDnia.filter(
     (p) =>
       (wydzial === "Wszystkie" ||
         p.wydzial === wydzial ||
@@ -93,12 +77,11 @@ function Wokanda() {
         Terminy mogą ulec zmianie – aktualne informacje dostępne są w Portalu Informacyjnym.
       </p>
 
-      {/* Pasek wyboru daty: Szybkie przyciski + Kalendarz */}
+      {/* Pasek wyboru daty */}
       <div className="mb-5 border border-border bg-surface p-3">
         <label className="mb-2 block text-xs font-bold uppercase text-primary">Wybierz datę posiedzenia:</label>
         
         <div className="flex flex-wrap items-center gap-2">
-          {/* Szybkie kafelki dni */}
           <div className="flex flex-wrap gap-1">
             {dni.map((d) => {
               const dt = new Date(d + "T12:00:00");
@@ -122,10 +105,9 @@ function Wokanda() {
 
           <span className="text-xs text-muted-foreground">lub</span>
 
-          {/* Kalendarz z dowolną datą */}
           <div className="flex items-center gap-2 border border-border bg-background px-3 py-1.5 text-xs">
             <Calendar className="h-4 w-4 text-primary" />
-            <span className="font-bold text-muted-foreground">Inna data:</span>
+            <span className="font-bold text-muted-foreground">Wybierz datę:</span>
             <input
               type="date"
               value={aktywnyDzien}
@@ -138,7 +120,7 @@ function Wokanda() {
         </div>
       </div>
 
-      {/* Filtry wydziału i sygnatury */}
+      {/* Filtry */}
       <div className="mb-4 grid gap-3 sm:grid-cols-2">
         <label className="text-xs font-bold text-primary">
           Wydział
@@ -165,41 +147,4 @@ function Wokanda() {
 
       {/* Tabela wokandy */}
       <div className="overflow-x-auto">
-        <table className="w-full border border-border text-sm">
-          <thead>
-            <tr className="bg-primary text-left text-xs uppercase tracking-wide text-primary-foreground">
-              <th className="px-3 py-2">Godz.</th>
-              <th className="px-3 py-2">Sygnatura</th>
-              <th className="px-3 py-2">Wydział</th>
-              <th className="px-3 py-2">Sala</th>
-              <th className="px-3 py-2">Rodzaj</th>
-              <th className="px-3 py-2">Przedmiot</th>
-            </tr>
-          </thead>
-          <tbody>
-            {lista.map((p, i) => (
-              <tr key={p.sygnatura + i} className="border-t border-border even:bg-muted">
-                <td className="px-3 py-2 font-bold">{p.godzina}</td>
-                <td className="whitespace-nowrap px-3 py-2 font-bold text-primary">{p.sygnatura}</td>
-                <td className="px-3 py-2">{p.wydzial}</td>
-                <td className="px-3 py-2">{p.sala}</td>
-                <td className="px-3 py-2">{p.rodzaj}</td>
-                <td className="px-3 py-2">{p.przedmiot}</td>
-              </tr>
-            ))}
-            {lista.length === 0 && (
-              <tr>
-                <td colSpan={6} className="px-3 py-6 text-center text-muted-foreground">
-                  Brak wyznaczonych spraw na dzień {aktywnyDzien} spełniających kryteria.
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-      </div>
-      <p className="mt-3 text-[11px] text-muted-foreground">
-        Liczba pozycji w dniu {aktywnyDzien}: {lista.length}
-      </p>
-    </PageShell>
-  );
-}
+        <table className="
