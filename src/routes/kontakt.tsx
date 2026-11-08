@@ -17,11 +17,11 @@ export const Route = createFileRoute("/kontakt")({
 });
 
 const DODATKOWE = [
-  ["Wydział Ksiąg Wieczystych – informacja", "41 246-22-34"],
-  ["Wykonywanie orzeczeń karnych", "41 246-22-40"],
-  ["Zamawianie akt do czytelni", "41 246-22-02"],
-  ["Zespół Kuratorskiej Służby Sądowej – sprawy rodzinne", "41 246-22-21"],
-  ["Zespół Kuratorskiej Służby Sądowej – sprawy karne", "41 246-22-18"],
+  ["Wydział Ksiąg Wieczystych – informacja", ""],
+  ["Wykonywanie orzeczeń karnych", ""],
+  ["Zamawianie akt do czytelni", ""],
+  ["Zespół Kuratorskiej Służby Sądowej – sprawy rodzinne", ""],
+  ["Zespół Kuratorskiej Służby Sądowej – sprawy karne", ""],
 ];
 
 function Kontakt() {
@@ -100,8 +100,7 @@ function Kontakt() {
 
       <div className="mt-6 border-l-4 border-primary bg-muted p-4 text-sm leading-relaxed">
         Informacji telefonicznych udziela Telefoniczne Biuro Obsługi Interesantów z siedzibą w Krakowie:{" "}
-        <b>12 286-32-83</b> (tel. stacjonarne i komórkowe) oraz <b>801 800 122</b> (tel. stacjonarne). Biuro nie
-        udziela porad prawnych.
+        Biuro nie udziela porad prawnych.
       </div>
     </PageShell>
   );
