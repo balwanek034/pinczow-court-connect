@@ -297,7 +297,6 @@ function Orzecznictwo() {
                       {/* Uzasadnienie (jeśli istnieje) */}
                       {o.uzasadnienie && (
                         <div className="mt-8 pt-4">
-                          <p className="mb-1 text-center italic text-[13px]">{o.sygnatura}</p>
                           <h4 className="mb-6 text-center font-serif italic text-base uppercase tracking-wider text-[#7A1A26]">
                             UZASADNIENIE
                           </h4>
