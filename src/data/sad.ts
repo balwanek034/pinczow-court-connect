@@ -51,7 +51,7 @@ export const WYDZIALY: Wydzial[] = [
   },
   {
     id: "karny",
-    przewodniczacy: "vacat",
+    przewodniczacy: "SSR Patryk Leszczyński",
     numer: "II",
     nazwa: "Wydział Karny",
     skrot: "K",
