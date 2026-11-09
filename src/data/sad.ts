@@ -117,6 +117,17 @@ export const KIEROWNICTWO: [Funkcja, Funkcja, ...Funkcja[]] = [
   },
 ];
 
+// Kategorie formularza kontaktowego (zapytania obywateli).
+export const KATEGORIE_ZAPYTAN = [
+  "Informacja o stanie sprawy",
+  "Termin rozprawy / posiedzenia",
+  "Dostęp do akt i kopie dokumentów",
+  "Wniosek lub pismo w sprawie",
+  "Skarga lub wniosek do Prezesa Sądu",
+  "Księgi wieczyste",
+  "Inne pytanie",
+];
+
 export const OBSZAR = "miasto Pińczów oraz gminy: Pińczów, Działoszyce, Kije, Michałów, Złota";
 
 export type Aktualnosc = {

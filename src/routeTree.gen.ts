@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AktualnosciRouteImport } from './routes/aktualnosci'
+import { Route as GodzinyUrzedowaniaRouteImport } from './routes/godziny-urzedowania'
 import { Route as KontaktRouteImport } from './routes/kontakt'
 import { Route as LogowanieRouteImport } from './routes/logowanie'
 import { Route as OrzecznictwoRouteImport } from './routes/orzecznictwo'
@@ -33,6 +34,11 @@ const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
 const AktualnosciRoute = AktualnosciRouteImport.update({
   id: '/aktualnosci',
   path: '/aktualnosci',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GodzinyUrzedowaniaRoute = GodzinyUrzedowaniaRouteImport.update({
+  id: '/godziny-urzedowania',
+  path: '/godziny-urzedowania',
   getParentRoute: () => rootRouteImport,
 } as any)
 const KontaktRoute = KontaktRouteImport.update({
@@ -79,6 +85,7 @@ const AuthenticatedPanelRoute = AuthenticatedPanelRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/aktualnosci': typeof AktualnosciRoute
+  '/godziny-urzedowania': typeof GodzinyUrzedowaniaRoute
   '/kontakt': typeof KontaktRoute
   '/logowanie': typeof LogowanieRoute
   '/orzecznictwo': typeof OrzecznictwoRoute
@@ -91,6 +98,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/aktualnosci': typeof AktualnosciRoute
+  '/godziny-urzedowania': typeof GodzinyUrzedowaniaRoute
   '/kontakt': typeof KontaktRoute
   '/logowanie': typeof LogowanieRoute
   '/orzecznictwo': typeof OrzecznictwoRoute
@@ -105,6 +113,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/aktualnosci': typeof AktualnosciRoute
+  '/godziny-urzedowania': typeof GodzinyUrzedowaniaRoute
   '/kontakt': typeof KontaktRoute
   '/logowanie': typeof LogowanieRoute
   '/orzecznictwo': typeof OrzecznictwoRoute
@@ -119,6 +128,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/aktualnosci'
+    | '/godziny-urzedowania'
     | '/kontakt'
     | '/logowanie'
     | '/orzecznictwo'
@@ -131,6 +141,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/aktualnosci'
+    | '/godziny-urzedowania'
     | '/kontakt'
     | '/logowanie'
     | '/orzecznictwo'
@@ -144,6 +155,7 @@ export interface FileRouteTypes {
     | '/'
     | '/_authenticated'
     | '/aktualnosci'
+    | '/godziny-urzedowania'
     | '/kontakt'
     | '/logowanie'
     | '/orzecznictwo'
@@ -158,6 +170,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AktualnosciRoute: typeof AktualnosciRoute
+  GodzinyUrzedowaniaRoute: typeof GodzinyUrzedowaniaRoute
   KontaktRoute: typeof KontaktRoute
   LogowanieRoute: typeof LogowanieRoute
   OrzecznictwoRoute: typeof OrzecznictwoRoute
@@ -187,6 +200,13 @@ declare module '@tanstack/react-router' {
       path: '/aktualnosci'
       fullPath: '/aktualnosci'
       preLoaderRoute: typeof AktualnosciRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/godziny-urzedowania': {
+      id: '/godziny-urzedowania'
+      path: '/godziny-urzedowania'
+      fullPath: '/godziny-urzedowania'
+      preLoaderRoute: typeof GodzinyUrzedowaniaRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/kontakt': {
@@ -265,6 +285,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AktualnosciRoute: AktualnosciRoute,
+  GodzinyUrzedowaniaRoute: GodzinyUrzedowaniaRoute,
   KontaktRoute: KontaktRoute,
   LogowanieRoute: LogowanieRoute,
   OrzecznictwoRoute: OrzecznictwoRoute,
