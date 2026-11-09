@@ -38,6 +38,36 @@ export type Database = {
         }
         Relationships: []
       }
+      sedziowie: {
+        Row: {
+          created_at: string
+          funkcja: string
+          id: string
+          imie_nazwisko: string
+          kolejnosc: number
+          rodzaj: string
+          wydzial: string
+        }
+        Insert: {
+          created_at?: string
+          funkcja?: string
+          id?: string
+          imie_nazwisko: string
+          kolejnosc?: number
+          rodzaj: string
+          wydzial?: string
+        }
+        Update: {
+          created_at?: string
+          funkcja?: string
+          id?: string
+          imie_nazwisko?: string
+          kolejnosc?: number
+          rodzaj?: string
+          wydzial?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           id: string
@@ -55,6 +85,89 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      zapytania: {
+        Row: {
+          created_at: string
+          id: string
+          imie_nazwisko: string
+          kategoria: string
+          kod_hash: string
+          kontakt: string
+          numer: string
+          status: string
+          sygnatura: string
+          temat: string
+          updated_at: string
+          wydzial: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          imie_nazwisko: string
+          kategoria: string
+          kod_hash: string
+          kontakt?: string
+          numer?: string
+          status?: string
+          sygnatura?: string
+          temat: string
+          updated_at?: string
+          wydzial?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          imie_nazwisko?: string
+          kategoria?: string
+          kod_hash?: string
+          kontakt?: string
+          numer?: string
+          status?: string
+          sygnatura?: string
+          temat?: string
+          updated_at?: string
+          wydzial?: string
+        }
+        Relationships: []
+      }
+      zapytania_wiadomosci: {
+        Row: {
+          autor: string
+          autor_id: string | null
+          autor_nazwa: string
+          created_at: string
+          id: string
+          tresc: string
+          zapytanie_id: string
+        }
+        Insert: {
+          autor: string
+          autor_id?: string | null
+          autor_nazwa?: string
+          created_at?: string
+          id?: string
+          tresc: string
+          zapytanie_id: string
+        }
+        Update: {
+          autor?: string
+          autor_id?: string | null
+          autor_nazwa?: string
+          created_at?: string
+          id?: string
+          tresc?: string
+          zapytanie_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "zapytania_wiadomosci_zapytanie_id_fkey"
+            columns: ["zapytanie_id"]
+            isOneToOne: false
+            referencedRelation: "zapytania"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {

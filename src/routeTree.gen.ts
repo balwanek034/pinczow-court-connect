@@ -12,12 +12,17 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AktualnosciRouteImport } from './routes/aktualnosci'
+import { Route as GodzinyUrzedowaniaRouteImport } from './routes/godziny-urzedowania'
 import { Route as KontaktRouteImport } from './routes/kontakt'
 import { Route as LogowanieRouteImport } from './routes/logowanie'
+import { Route as OrzecznictwoRouteImport } from './routes/orzecznictwo'
+import { Route as SedziowieRouteImport } from './routes/sedziowie'
+import { Route as SprawdzZapytanieRouteImport } from './routes/sprawdz-zapytanie'
 import { Route as StrukturaOrganizacyjnaRouteImport } from './routes/struktura-organizacyjna'
 import { Route as WokandaRouteImport } from './routes/wokanda'
 import { Route as WydzialyRouteImport } from './routes/wydzialy'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
+import { Route as AuthenticatedKorespondencjaRouteImport } from './routes/_authenticated/korespondencja'
 import { Route as AuthenticatedPanelRouteImport } from './routes/_authenticated/panel'
 
 const IndexRoute = IndexRouteImport.update({
@@ -34,6 +39,11 @@ const AktualnosciRoute = AktualnosciRouteImport.update({
   path: '/aktualnosci',
   getParentRoute: () => rootRouteImport,
 } as any)
+const GodzinyUrzedowaniaRoute = GodzinyUrzedowaniaRouteImport.update({
+  id: '/godziny-urzedowania',
+  path: '/godziny-urzedowania',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const KontaktRoute = KontaktRouteImport.update({
   id: '/kontakt',
   path: '/kontakt',
@@ -42,6 +52,21 @@ const KontaktRoute = KontaktRouteImport.update({
 const LogowanieRoute = LogowanieRouteImport.update({
   id: '/logowanie',
   path: '/logowanie',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OrzecznictwoRoute = OrzecznictwoRouteImport.update({
+  id: '/orzecznictwo',
+  path: '/orzecznictwo',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SedziowieRoute = SedziowieRouteImport.update({
+  id: '/sedziowie',
+  path: '/sedziowie',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SprawdzZapytanieRoute = SprawdzZapytanieRouteImport.update({
+  id: '/sprawdz-zapytanie',
+  path: '/sprawdz-zapytanie',
   getParentRoute: () => rootRouteImport,
 } as any)
 const StrukturaOrganizacyjnaRoute = StrukturaOrganizacyjnaRouteImport.update({
@@ -64,6 +89,12 @@ const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
   path: '/admin',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedKorespondencjaRoute =
+  AuthenticatedKorespondencjaRouteImport.update({
+    id: '/korespondencja',
+    path: '/korespondencja',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedPanelRoute = AuthenticatedPanelRouteImport.update({
   id: '/panel',
   path: '/panel',
@@ -73,23 +104,33 @@ const AuthenticatedPanelRoute = AuthenticatedPanelRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/aktualnosci': typeof AktualnosciRoute
+  '/godziny-urzedowania': typeof GodzinyUrzedowaniaRoute
   '/kontakt': typeof KontaktRoute
   '/logowanie': typeof LogowanieRoute
+  '/orzecznictwo': typeof OrzecznictwoRoute
+  '/sedziowie': typeof SedziowieRoute
+  '/sprawdz-zapytanie': typeof SprawdzZapytanieRoute
   '/struktura-organizacyjna': typeof StrukturaOrganizacyjnaRoute
   '/wokanda': typeof WokandaRoute
   '/wydzialy': typeof WydzialyRoute
   '/admin': typeof AuthenticatedAdminRoute
+  '/korespondencja': typeof AuthenticatedKorespondencjaRoute
   '/panel': typeof AuthenticatedPanelRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/aktualnosci': typeof AktualnosciRoute
+  '/godziny-urzedowania': typeof GodzinyUrzedowaniaRoute
   '/kontakt': typeof KontaktRoute
   '/logowanie': typeof LogowanieRoute
+  '/orzecznictwo': typeof OrzecznictwoRoute
+  '/sedziowie': typeof SedziowieRoute
+  '/sprawdz-zapytanie': typeof SprawdzZapytanieRoute
   '/struktura-organizacyjna': typeof StrukturaOrganizacyjnaRoute
   '/wokanda': typeof WokandaRoute
   '/wydzialy': typeof WydzialyRoute
   '/admin': typeof AuthenticatedAdminRoute
+  '/korespondencja': typeof AuthenticatedKorespondencjaRoute
   '/panel': typeof AuthenticatedPanelRoute
 }
 export interface FileRoutesById {
@@ -97,12 +138,17 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/aktualnosci': typeof AktualnosciRoute
+  '/godziny-urzedowania': typeof GodzinyUrzedowaniaRoute
   '/kontakt': typeof KontaktRoute
   '/logowanie': typeof LogowanieRoute
+  '/orzecznictwo': typeof OrzecznictwoRoute
+  '/sedziowie': typeof SedziowieRoute
+  '/sprawdz-zapytanie': typeof SprawdzZapytanieRoute
   '/struktura-organizacyjna': typeof StrukturaOrganizacyjnaRoute
   '/wokanda': typeof WokandaRoute
   '/wydzialy': typeof WydzialyRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
+  '/_authenticated/korespondencja': typeof AuthenticatedKorespondencjaRoute
   '/_authenticated/panel': typeof AuthenticatedPanelRoute
 }
 export interface FileRouteTypes {
@@ -110,35 +156,50 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/aktualnosci'
+    | '/godziny-urzedowania'
     | '/kontakt'
     | '/logowanie'
+    | '/orzecznictwo'
+    | '/sedziowie'
+    | '/sprawdz-zapytanie'
     | '/struktura-organizacyjna'
     | '/wokanda'
     | '/wydzialy'
     | '/admin'
+    | '/korespondencja'
     | '/panel'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/aktualnosci'
+    | '/godziny-urzedowania'
     | '/kontakt'
     | '/logowanie'
+    | '/orzecznictwo'
+    | '/sedziowie'
+    | '/sprawdz-zapytanie'
     | '/struktura-organizacyjna'
     | '/wokanda'
     | '/wydzialy'
     | '/admin'
+    | '/korespondencja'
     | '/panel'
   id:
     | '__root__'
     | '/'
     | '/_authenticated'
     | '/aktualnosci'
+    | '/godziny-urzedowania'
     | '/kontakt'
     | '/logowanie'
+    | '/orzecznictwo'
+    | '/sedziowie'
+    | '/sprawdz-zapytanie'
     | '/struktura-organizacyjna'
     | '/wokanda'
     | '/wydzialy'
     | '/_authenticated/admin'
+    | '/_authenticated/korespondencja'
     | '/_authenticated/panel'
   fileRoutesById: FileRoutesById
 }
@@ -146,8 +207,12 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AktualnosciRoute: typeof AktualnosciRoute
+  GodzinyUrzedowaniaRoute: typeof GodzinyUrzedowaniaRoute
   KontaktRoute: typeof KontaktRoute
   LogowanieRoute: typeof LogowanieRoute
+  OrzecznictwoRoute: typeof OrzecznictwoRoute
+  SedziowieRoute: typeof SedziowieRoute
+  SprawdzZapytanieRoute: typeof SprawdzZapytanieRoute
   StrukturaOrganizacyjnaRoute: typeof StrukturaOrganizacyjnaRoute
   WokandaRoute: typeof WokandaRoute
   WydzialyRoute: typeof WydzialyRoute
@@ -176,6 +241,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AktualnosciRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/godziny-urzedowania': {
+      id: '/godziny-urzedowania'
+      path: '/godziny-urzedowania'
+      fullPath: '/godziny-urzedowania'
+      preLoaderRoute: typeof GodzinyUrzedowaniaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/kontakt': {
       id: '/kontakt'
       path: '/kontakt'
@@ -188,6 +260,27 @@ declare module '@tanstack/react-router' {
       path: '/logowanie'
       fullPath: '/logowanie'
       preLoaderRoute: typeof LogowanieRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/orzecznictwo': {
+      id: '/orzecznictwo'
+      path: '/orzecznictwo'
+      fullPath: '/orzecznictwo'
+      preLoaderRoute: typeof OrzecznictwoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sedziowie': {
+      id: '/sedziowie'
+      path: '/sedziowie'
+      fullPath: '/sedziowie'
+      preLoaderRoute: typeof SedziowieRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sprawdz-zapytanie': {
+      id: '/sprawdz-zapytanie'
+      path: '/sprawdz-zapytanie'
+      fullPath: '/sprawdz-zapytanie'
+      preLoaderRoute: typeof SprawdzZapytanieRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/struktura-organizacyjna': {
@@ -218,6 +311,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/korespondencja': {
+      id: '/_authenticated/korespondencja'
+      path: '/korespondencja'
+      fullPath: '/korespondencja'
+      preLoaderRoute: typeof AuthenticatedKorespondencjaRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/panel': {
       id: '/_authenticated/panel'
       path: '/panel'
@@ -230,11 +330,13 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedAdminRoute: typeof AuthenticatedAdminRoute
+  AuthenticatedKorespondencjaRoute: typeof AuthenticatedKorespondencjaRoute
   AuthenticatedPanelRoute: typeof AuthenticatedPanelRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAdminRoute: AuthenticatedAdminRoute,
+  AuthenticatedKorespondencjaRoute: AuthenticatedKorespondencjaRoute,
   AuthenticatedPanelRoute: AuthenticatedPanelRoute,
 }
 
@@ -245,8 +347,12 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AktualnosciRoute: AktualnosciRoute,
+  GodzinyUrzedowaniaRoute: GodzinyUrzedowaniaRoute,
   KontaktRoute: KontaktRoute,
   LogowanieRoute: LogowanieRoute,
+  OrzecznictwoRoute: OrzecznictwoRoute,
+  SedziowieRoute: SedziowieRoute,
+  SprawdzZapytanieRoute: SprawdzZapytanieRoute,
   StrukturaOrganizacyjnaRoute: StrukturaOrganizacyjnaRoute,
   WokandaRoute: WokandaRoute,
   WydzialyRoute: WydzialyRoute,
