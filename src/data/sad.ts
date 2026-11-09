@@ -128,6 +128,12 @@ export const KATEGORIE_ZAPYTAN = [
   "Inne pytanie",
 ];
 
+export const NAZWY_STATUSU: Record<"nowe" | "w_toku" | "zamkniete", string> = {
+  nowe: "Przyjęte – oczekuje na rozpatrzenie",
+  w_toku: "W trakcie rozpatrywania",
+  zamkniete: "Zakończone",
+};
+
 export const OBSZAR = "miasto Pińczów oraz gminy: Pińczów, Działoszyce, Kije, Michałów, Złota";
 
 export type Aktualnosc = {

@@ -3,13 +3,8 @@ import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useState, type FormEvent } from "react";
 import { Landmark, Search, Send, Trash2, UserRound } from "lucide-react";
 import { PageShell } from "@/components/court/PageShell";
-import { SAD } from "@/data/sad";
-import {
-  dopiszDoZapytania,
-  pobierzZapytanie,
-  type StatusZapytania,
-  type ZapytanieObywatela,
-} from "@/lib/zapytania.functions";
+import { NAZWY_STATUSU, SAD } from "@/data/sad";
+import { dopiszDoZapytania, pobierzZapytanie, type ZapytanieObywatela } from "@/lib/zapytania.functions";
 import {
   oznaczPrzeczytane,
   usunZapisane,
@@ -35,12 +30,6 @@ export const Route = createFileRoute("/sprawdz-zapytanie")({
   }),
   component: SprawdzZapytanie,
 });
-
-export const NAZWY_STATUSU: Record<StatusZapytania, string> = {
-  nowe: "Przyjęte – oczekuje na rozpatrzenie",
-  w_toku: "W trakcie rozpatrywania",
-  zamkniete: "Zakończone",
-};
 
 const POLE =
   "mt-1 block w-full border border-input bg-surface px-3 py-2 text-sm font-normal normal-case text-foreground focus:outline-none focus:ring-1 focus:ring-ring";

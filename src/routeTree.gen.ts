@@ -16,6 +16,7 @@ import { Route as GodzinyUrzedowaniaRouteImport } from './routes/godziny-urzedow
 import { Route as KontaktRouteImport } from './routes/kontakt'
 import { Route as LogowanieRouteImport } from './routes/logowanie'
 import { Route as OrzecznictwoRouteImport } from './routes/orzecznictwo'
+import { Route as SprawdzZapytanieRouteImport } from './routes/sprawdz-zapytanie'
 import { Route as StrukturaOrganizacyjnaRouteImport } from './routes/struktura-organizacyjna'
 import { Route as WokandaRouteImport } from './routes/wokanda'
 import { Route as WydzialyRouteImport } from './routes/wydzialy'
@@ -56,6 +57,11 @@ const OrzecznictwoRoute = OrzecznictwoRouteImport.update({
   path: '/orzecznictwo',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SprawdzZapytanieRoute = SprawdzZapytanieRouteImport.update({
+  id: '/sprawdz-zapytanie',
+  path: '/sprawdz-zapytanie',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const StrukturaOrganizacyjnaRoute = StrukturaOrganizacyjnaRouteImport.update({
   id: '/struktura-organizacyjna',
   path: '/struktura-organizacyjna',
@@ -89,6 +95,7 @@ export interface FileRoutesByFullPath {
   '/kontakt': typeof KontaktRoute
   '/logowanie': typeof LogowanieRoute
   '/orzecznictwo': typeof OrzecznictwoRoute
+  '/sprawdz-zapytanie': typeof SprawdzZapytanieRoute
   '/struktura-organizacyjna': typeof StrukturaOrganizacyjnaRoute
   '/wokanda': typeof WokandaRoute
   '/wydzialy': typeof WydzialyRoute
@@ -102,6 +109,7 @@ export interface FileRoutesByTo {
   '/kontakt': typeof KontaktRoute
   '/logowanie': typeof LogowanieRoute
   '/orzecznictwo': typeof OrzecznictwoRoute
+  '/sprawdz-zapytanie': typeof SprawdzZapytanieRoute
   '/struktura-organizacyjna': typeof StrukturaOrganizacyjnaRoute
   '/wokanda': typeof WokandaRoute
   '/wydzialy': typeof WydzialyRoute
@@ -117,6 +125,7 @@ export interface FileRoutesById {
   '/kontakt': typeof KontaktRoute
   '/logowanie': typeof LogowanieRoute
   '/orzecznictwo': typeof OrzecznictwoRoute
+  '/sprawdz-zapytanie': typeof SprawdzZapytanieRoute
   '/struktura-organizacyjna': typeof StrukturaOrganizacyjnaRoute
   '/wokanda': typeof WokandaRoute
   '/wydzialy': typeof WydzialyRoute
@@ -132,6 +141,7 @@ export interface FileRouteTypes {
     | '/kontakt'
     | '/logowanie'
     | '/orzecznictwo'
+    | '/sprawdz-zapytanie'
     | '/struktura-organizacyjna'
     | '/wokanda'
     | '/wydzialy'
@@ -145,6 +155,7 @@ export interface FileRouteTypes {
     | '/kontakt'
     | '/logowanie'
     | '/orzecznictwo'
+    | '/sprawdz-zapytanie'
     | '/struktura-organizacyjna'
     | '/wokanda'
     | '/wydzialy'
@@ -159,6 +170,7 @@ export interface FileRouteTypes {
     | '/kontakt'
     | '/logowanie'
     | '/orzecznictwo'
+    | '/sprawdz-zapytanie'
     | '/struktura-organizacyjna'
     | '/wokanda'
     | '/wydzialy'
@@ -174,6 +186,7 @@ export interface RootRouteChildren {
   KontaktRoute: typeof KontaktRoute
   LogowanieRoute: typeof LogowanieRoute
   OrzecznictwoRoute: typeof OrzecznictwoRoute
+  SprawdzZapytanieRoute: typeof SprawdzZapytanieRoute
   StrukturaOrganizacyjnaRoute: typeof StrukturaOrganizacyjnaRoute
   WokandaRoute: typeof WokandaRoute
   WydzialyRoute: typeof WydzialyRoute
@@ -228,6 +241,13 @@ declare module '@tanstack/react-router' {
       path: '/orzecznictwo'
       fullPath: '/orzecznictwo'
       preLoaderRoute: typeof OrzecznictwoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sprawdz-zapytanie': {
+      id: '/sprawdz-zapytanie'
+      path: '/sprawdz-zapytanie'
+      fullPath: '/sprawdz-zapytanie'
+      preLoaderRoute: typeof SprawdzZapytanieRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/struktura-organizacyjna': {
@@ -289,6 +309,7 @@ const rootRouteChildren: RootRouteChildren = {
   KontaktRoute: KontaktRoute,
   LogowanieRoute: LogowanieRoute,
   OrzecznictwoRoute: OrzecznictwoRoute,
+  SprawdzZapytanieRoute: SprawdzZapytanieRoute,
   StrukturaOrganizacyjnaRoute: StrukturaOrganizacyjnaRoute,
   WokandaRoute: WokandaRoute,
   WydzialyRoute: WydzialyRoute,
