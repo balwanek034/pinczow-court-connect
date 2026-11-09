@@ -33,6 +33,9 @@ export function SiteHeader() {
 
   return (
     <header className="border-b border-border bg-surface">
+      <div className="bg-[#8b2635] px-4 py-1.5 text-center text-xs font-bold uppercase tracking-wider text-white shadow-sm">
+  Strona fikcyjna stworzona na potrzeby projektu Pińczów Roleplay
+</div>
       <a
         href="#tresc"
         className="sr-only focus:not-sr-only focus:absolute focus:left-2 focus:top-2 focus:z-50 focus:bg-primary focus:px-3 focus:py-2 focus:text-primary-foreground"
