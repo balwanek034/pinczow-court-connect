@@ -1,5 +1,4 @@
 import { Link } from "@tanstack/react-router";
-import { SAD } from "@/data/sad";
 
 type Item = {
   label: string;
@@ -9,6 +8,9 @@ type Item = {
     | "/wydzialy"
     | "/wokanda"
     | "/kontakt"
+    | "/godziny-urzedowania"
+    | "/sedziowie"
+    | "/sprawdz-zapytanie"
     | "/logowanie"
     | "/struktura-organizacyjna"
     | "/orzecznictwo";
@@ -25,7 +27,7 @@ const GROUPS: { title: string; bg: string; items: Item[] }[] = [
     title: "Działalność sądu",
     bg: "bg-menu-2",
     items: [
-      { label: "Godziny urzędowania", to: "/kontakt" },
+      { label: "Godziny urzędowania", to: "/godziny-urzedowania" },
       { label: "Kontakt", to: "/kontakt" },
       { label: "Struktura organizacyjna", to: "/struktura-organizacyjna" },
       { label: "Wydziały", to: "/wydzialy" },
@@ -37,9 +39,9 @@ const GROUPS: { title: string; bg: string; items: Item[] }[] = [
     bg: "bg-menu-3",
     items: [
       { label: "Logowanie pracowników", to: "/logowanie" },
-      { label: "Portal Informacyjny", href: SAD.portal },
+      { label: "Sędziowie i asesorzy", to: "/sedziowie" },
+      { label: "Sprawdź odpowiedź sądu", to: "/sprawdz-zapytanie" },
       { label: "Elektroniczne Księgi Wieczyste", href: "" },
-      // TUTAJ ZMIANA: Zamiast zewnętrznego href, kierujemy do podstrony portalu:
       { label: "Orzecznictwo", to: "/orzecznictwo" },
       { label: "Krajowy Rejestr Karny", href: "" },
     ],
