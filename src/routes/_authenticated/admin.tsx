@@ -3,18 +3,19 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useState, type FormEvent } from "react";
 import { toast } from "sonner";
-import { ShieldCheck, Trash2, UserPlus } from "lucide-react";
+import { Gavel, ShieldCheck, Trash2, UserPlus, Users } from "lucide-react";
 import { PageShell } from "@/components/court/PageShell";
 import { NAZWY_ROL, useAuth, type Rola } from "@/hooks/useAuth";
 import { dodajPracownika, listaPracownikow, usunPracownika, zmienRole } from "@/lib/employees.functions";
+import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/_authenticated/admin")({
   head: () => ({
     meta: [
       { title: "Panel administratora – Sąd Rejonowy w Pińczowie" },
-      { name: "description", content: "Zarządzanie kontami i uprawnieniami pracowników sądu." },
+      { name: "description", content: "Zarządzanie kontami, uprawnieniami oraz składem sędziowskim." },
       { property: "og:title", content: "Panel administratora – Sąd Rejonowy w Pińczowie" },
-      { property: "og:description", content: "Zarządzanie kontami pracowników sądu." },
+      { property: "og:description", content: "Zarządzanie kontami i sędziami sądu." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
       { name: "robots", content: "noindex" },
@@ -57,6 +58,7 @@ function AdminTresc() {
   const zmien = useServerFn(zmienRole);
   const usun = useServerFn(usunPracownika);
 
+  // --- PRACOWNICY ---
   const { data: lista = [], isLoading } = useQuery({ queryKey: ["pracownicy"], queryFn: () => pobierz() });
   const odswiez = () => qc.invalidateQueries({ queryKey: ["pracownicy"] });
 
@@ -68,6 +70,7 @@ function AdminTresc() {
     },
     onError: (e) => toast.error(komunikat(e)),
   });
+
   const usuwanie = useMutation({
     mutationFn: (userId: string) => usun({ data: { userId } }),
     onSuccess: () => {
@@ -87,30 +90,250 @@ function AdminTresc() {
     },
     onError: (e) => toast.error(komunikat(e)),
   });
-  const onSubmit = (e: FormEvent) => {
+
+  const onSubmitPracownik = (e: FormEvent) => {
     e.preventDefault();
     dodawanie.mutate();
+  };
+
+  // --- SĘDZIOWIE I ASESORZY ---
+  const { data: sedziowie = [], isLoading: wczytywanieSedziow } = useQuery({
+    queryKey: ["sedziowie"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("sedziowie")
+        .select("id, imie_nazwisko, rodzaj, funkcja, wydzial, kolejnosc")
+        .order("kolejnosc")
+        .order("imie_nazwisko");
+      if (error) throw error;
+      return data ?? [];
+    },
+  });
+
+  const [sedziaForm, setSedziaForm] = useState({
+    imie_nazwisko: "",
+    rodzaj: "sedzia",
+    funkcja: "",
+    wydzial: "I Wydział Cywilny",
+    kolejnosc: 1,
+  });
+
+  const dodawanieSedziego = useMutation({
+    mutationFn: async () => {
+      if (!sedziaForm.imie_nazwisko.trim()) {
+        throw new Error("Wpisz imię i nazwisko sędziego lub asesora.");
+      }
+      const { error } = await supabase.from("sedziowie").insert({
+        imie_nazwisko: sedziaForm.imie_nazwisko.trim(),
+        rodzaj: sedziaForm.rodzaj,
+        funkcja: sedziaForm.funkcja.trim() || null,
+        wydzial: sedziaForm.wydzial.trim() || null,
+        kolejnosc: Number(sedziaForm.kolejnosc) || 1,
+      });
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast.success("Dodano do wykazu sędziów i asesorów.");
+      setSedziaForm({
+        imie_nazwisko: "",
+        rodzaj: "sedzia",
+        funkcja: "",
+        wydzial: "I Wydział Cywilny",
+        kolejnosc: sedziowie.length + 2,
+      });
+      void qc.invalidateQueries({ queryKey: ["sedziowie"] });
+    },
+    onError: (e) => toast.error(komunikat(e)),
+  });
+
+  const usuwanieSedziego = useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase.from("sedziowie").delete().eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast.success("Wpis został usunięty z wykazu.");
+      void qc.invalidateQueries({ queryKey: ["sedziowie"] });
+    },
+    onError: (e) => toast.error(komunikat(e)),
+  });
+
+  const onSubmitSedzia = (e: FormEvent) => {
+    e.preventDefault();
+    dodawanieSedziego.mutate();
   };
 
   const adminow = lista.filter((p) => p.roles.includes("admin")).length;
 
   return (
     <PageShell crumbs={["Panel administratora"]} title="Panel administratora">
-      <div className="mb-6 grid gap-3 sm:grid-cols-3">
+      {/* Statystyki */}
+      <div className="mb-6 grid gap-3 sm:grid-cols-4">
         {[
-          ["Konta", lista.length],
+          ["Konta pracowników", lista.length],
           ["Administratorzy", adminow],
-          ["Pracownicy", lista.length - adminow],
+          ["Sędziowie w wykazie", sedziowie.filter((s) => s.rodzaj === "sedzia").length],
+          ["Asesorzy w wykazie", sedziowie.filter((s) => s.rodzaj === "asesor").length],
         ].map(([k, v]) => (
-          <div key={k} className="bg-surface p-4">
+          <div key={k} className="border border-border bg-surface p-4">
             <div className="text-xs uppercase text-muted-foreground">{k}</div>
             <div className="font-serif text-3xl text-primary">{v}</div>
           </div>
         ))}
       </div>
 
+      {/* SEKCJA 1: SĘDZIOWIE I ASESORZY */}
+      <div className="mb-10 rounded border border-border bg-surface p-5 shadow-xs">
+        <h2 className="mb-2 flex items-center gap-2 font-serif text-xl text-primary">
+          <Gavel className="h-5 w-5" /> Zarządzanie spisem sędziów i asesorów
+        </h2>
+        <p className="mb-5 text-xs text-muted-foreground">
+          Wpisy dodane w tym miejscu natychmiast pojawiają się w publicznym wykazie pod adresem{" "}
+          <Link to="/sedziowie" className="underline hover:text-primary">
+            /sedziowie
+          </Link>
+          .
+        </p>
+
+        {/* Tabela sędziów */}
+        <div className="mb-6 overflow-x-auto">
+          <table className="w-full border border-border bg-surface text-sm">
+            <thead>
+              <tr className="bg-primary text-left text-xs uppercase text-primary-foreground">
+                <th className="w-12 px-3 py-2 text-center">Kol.</th>
+                <th className="px-3 py-2">Imię i nazwisko</th>
+                <th className="px-3 py-2">Rodzaj</th>
+                <th className="px-3 py-2">Funkcja</th>
+                <th className="px-3 py-2">Wydział</th>
+                <th className="px-3 py-2 text-right">Akcja</th>
+              </tr>
+            </thead>
+            <tbody>
+              {wczytywanieSedziow && (
+                <tr>
+                  <td colSpan={6} className="px-3 py-4 text-center text-muted-foreground">
+                    Wczytywanie wykazu…
+                  </td>
+                </tr>
+              )}
+              {!wczytywanieSedziow && sedziowie.length === 0 && (
+                <tr>
+                  <td colSpan={6} className="px-3 py-4 text-center text-muted-foreground">
+                    Brak wpisów w wykazie. Dodaj pierwszą osobę formularzem poniżej.
+                  </td>
+                </tr>
+              )}
+              {sedziowie.map((s) => (
+                <tr key={s.id} className="border-t border-border hover:bg-muted/30">
+                  <td className="px-3 py-2 text-center text-xs font-mono text-muted-foreground">{s.kolejnosc}</td>
+                  <td className="px-3 py-2 font-bold">{s.imie_nazwisko}</td>
+                  <td className="px-3 py-2">
+                    <span
+                      className={`inline-block rounded px-2 py-0.5 text-xs uppercase font-medium ${
+                        s.rodzaj === "sedzia" ? "bg-primary/10 text-primary" : "bg-accent/20 text-accent-foreground"
+                      }`}
+                    >
+                      {s.rodzaj === "sedzia" ? "Sędzia" : "Asesor sądowy"}
+                    </span>
+                  </td>
+                  <td className="px-3 py-2">{s.funkcja || "—"}</td>
+                  <td className="px-3 py-2">{s.wydzial || "—"}</td>
+                  <td className="px-3 py-2 text-right">
+                    <button
+                      disabled={usuwanieSedziego.isPending}
+                      onClick={() => {
+                        if (confirm(`Usunąć ${s.imie_nazwisko} z wykazu?`)) {
+                          usuwanieSedziego.mutate(s.id);
+                        }
+                      }}
+                      className="inline-flex items-center gap-1 px-2 py-1 text-xs text-destructive hover:underline disabled:opacity-40"
+                    >
+                      <Trash2 className="h-4 w-4" /> Usuń
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        {/* Formularz dodawania sędziego */}
+        <h3 className="mb-3 font-serif text-sm font-bold uppercase tracking-wide text-primary">
+          Dodaj sędziego lub asesora do wykazu
+        </h3>
+        <form onSubmit={onSubmitSedzia} className="grid gap-3 rounded border border-border/60 bg-muted/20 p-4 sm:grid-cols-3">
+          <label className="text-xs font-bold uppercase text-primary sm:col-span-2">
+            Imię i nazwisko (z tytułem)
+            <input
+              type="text"
+              required
+              placeholder="np. SSR Jan Kowalski"
+              value={sedziaForm.imie_nazwisko}
+              onChange={(e) => setSedziaForm((f) => ({ ...f, imie_nazwisko: e.target.value }))}
+              className="mt-1 block w-full border border-input bg-surface px-3 py-2 text-sm font-normal normal-case text-foreground focus:outline-none focus:ring-1 focus:ring-ring"
+            />
+          </label>
+
+          <label className="text-xs font-bold uppercase text-primary">
+            Stanowisko (rodzaj)
+            <select
+              value={sedziaForm.rodzaj}
+              onChange={(e) => setSedziaForm((f) => ({ ...f, rodzaj: e.target.value }))}
+              className="mt-1 block w-full border border-input bg-surface px-3 py-2 text-sm font-normal normal-case text-foreground"
+            >
+              <option value="sedzia">Sędzia</option>
+              <option value="asesor">Asesor sądowy</option>
+            </select>
+          </label>
+
+          <label className="text-xs font-bold uppercase text-primary">
+            Funkcja (opcjonalnie)
+            <input
+              type="text"
+              placeholder="np. Prezes Sądu, Przewodniczący Wydziału"
+              value={sedziaForm.funkcja}
+              onChange={(e) => setSedziaForm((f) => ({ ...f, funkcja: e.target.value }))}
+              className="mt-1 block w-full border border-input bg-surface px-3 py-2 text-sm font-normal normal-case text-foreground focus:outline-none focus:ring-1 focus:ring-ring"
+            />
+          </label>
+
+          <label className="text-xs font-bold uppercase text-primary">
+            Wydział
+            <input
+              type="text"
+              placeholder="np. I Wydział Cywilny"
+              value={sedziaForm.wydzial}
+              onChange={(e) => setSedziaForm((f) => ({ ...f, wydzial: e.target.value }))}
+              className="mt-1 block w-full border border-input bg-surface px-3 py-2 text-sm font-normal normal-case text-foreground focus:outline-none focus:ring-1 focus:ring-ring"
+            />
+          </label>
+
+          <label className="text-xs font-bold uppercase text-primary">
+            Kolejność wyświetlania
+            <input
+              type="number"
+              min="1"
+              value={sedziaForm.kolejnosc}
+              onChange={(e) => setSedziaForm((f) => ({ ...f, kolejnosc: parseInt(e.target.value, 10) || 1 }))}
+              className="mt-1 block w-full border border-input bg-surface px-3 py-2 text-sm font-normal normal-case text-foreground focus:outline-none focus:ring-1 focus:ring-ring"
+            />
+          </label>
+
+          <div className="sm:col-span-3 flex justify-end">
+            <button
+              type="submit"
+              disabled={dodawanieSedziego.isPending}
+              className="bg-primary px-6 py-2.5 text-xs font-bold uppercase tracking-wide text-primary-foreground hover:bg-crimson-dark disabled:opacity-60"
+            >
+              {dodawanieSedziego.isPending ? "Zapisywanie…" : "Dodaj do wykazu"}
+            </button>
+          </div>
+        </form>
+      </div>
+
+      {/* SEKCJA 2: KONTA I UPRAWNIENIA PRACOWNIKÓW */}
       <h2 className="mb-3 flex items-center gap-2 font-serif text-lg text-primary">
-        <ShieldCheck className="h-5 w-5" /> Konta i uprawnienia
+        <Users className="h-5 w-5" /> Konta i uprawnienia pracowników
       </h2>
       <div className="mb-8 overflow-x-auto">
         <table className="w-full border border-border bg-surface text-sm">
@@ -179,10 +402,11 @@ function AdminTresc() {
         </table>
       </div>
 
+      {/* Formularz tworzenia konta pracownika */}
       <h2 className="mb-3 flex items-center gap-2 font-serif text-lg text-primary">
-        <UserPlus className="h-5 w-5" /> Dodaj pracownika
+        <UserPlus className="h-5 w-5" /> Utwórz nowe konto pracownika
       </h2>
-      <form onSubmit={onSubmit} className="grid gap-4 bg-surface p-5 sm:grid-cols-2">
+      <form onSubmit={onSubmitPracownik} className="grid gap-4 bg-surface p-5 sm:grid-cols-2">
         {(
           [
             ["full_name", "Imię i nazwisko", "text"],
