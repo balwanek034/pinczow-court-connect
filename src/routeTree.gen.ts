@@ -14,6 +14,7 @@ import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/
 import { Route as AktualnosciRouteImport } from './routes/aktualnosci'
 import { Route as KontaktRouteImport } from './routes/kontakt'
 import { Route as LogowanieRouteImport } from './routes/logowanie'
+import { Route as OrzecznictwoRouteImport } from './routes/orzecznictwo'
 import { Route as StrukturaOrganizacyjnaRouteImport } from './routes/struktura-organizacyjna'
 import { Route as WokandaRouteImport } from './routes/wokanda'
 import { Route as WydzialyRouteImport } from './routes/wydzialy'
@@ -42,6 +43,11 @@ const KontaktRoute = KontaktRouteImport.update({
 const LogowanieRoute = LogowanieRouteImport.update({
   id: '/logowanie',
   path: '/logowanie',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OrzecznictwoRoute = OrzecznictwoRouteImport.update({
+  id: '/orzecznictwo',
+  path: '/orzecznictwo',
   getParentRoute: () => rootRouteImport,
 } as any)
 const StrukturaOrganizacyjnaRoute = StrukturaOrganizacyjnaRouteImport.update({
@@ -75,6 +81,7 @@ export interface FileRoutesByFullPath {
   '/aktualnosci': typeof AktualnosciRoute
   '/kontakt': typeof KontaktRoute
   '/logowanie': typeof LogowanieRoute
+  '/orzecznictwo': typeof OrzecznictwoRoute
   '/struktura-organizacyjna': typeof StrukturaOrganizacyjnaRoute
   '/wokanda': typeof WokandaRoute
   '/wydzialy': typeof WydzialyRoute
@@ -86,6 +93,7 @@ export interface FileRoutesByTo {
   '/aktualnosci': typeof AktualnosciRoute
   '/kontakt': typeof KontaktRoute
   '/logowanie': typeof LogowanieRoute
+  '/orzecznictwo': typeof OrzecznictwoRoute
   '/struktura-organizacyjna': typeof StrukturaOrganizacyjnaRoute
   '/wokanda': typeof WokandaRoute
   '/wydzialy': typeof WydzialyRoute
@@ -99,6 +107,7 @@ export interface FileRoutesById {
   '/aktualnosci': typeof AktualnosciRoute
   '/kontakt': typeof KontaktRoute
   '/logowanie': typeof LogowanieRoute
+  '/orzecznictwo': typeof OrzecznictwoRoute
   '/struktura-organizacyjna': typeof StrukturaOrganizacyjnaRoute
   '/wokanda': typeof WokandaRoute
   '/wydzialy': typeof WydzialyRoute
@@ -112,6 +121,7 @@ export interface FileRouteTypes {
     | '/aktualnosci'
     | '/kontakt'
     | '/logowanie'
+    | '/orzecznictwo'
     | '/struktura-organizacyjna'
     | '/wokanda'
     | '/wydzialy'
@@ -123,6 +133,7 @@ export interface FileRouteTypes {
     | '/aktualnosci'
     | '/kontakt'
     | '/logowanie'
+    | '/orzecznictwo'
     | '/struktura-organizacyjna'
     | '/wokanda'
     | '/wydzialy'
@@ -135,6 +146,7 @@ export interface FileRouteTypes {
     | '/aktualnosci'
     | '/kontakt'
     | '/logowanie'
+    | '/orzecznictwo'
     | '/struktura-organizacyjna'
     | '/wokanda'
     | '/wydzialy'
@@ -148,6 +160,7 @@ export interface RootRouteChildren {
   AktualnosciRoute: typeof AktualnosciRoute
   KontaktRoute: typeof KontaktRoute
   LogowanieRoute: typeof LogowanieRoute
+  OrzecznictwoRoute: typeof OrzecznictwoRoute
   StrukturaOrganizacyjnaRoute: typeof StrukturaOrganizacyjnaRoute
   WokandaRoute: typeof WokandaRoute
   WydzialyRoute: typeof WydzialyRoute
@@ -188,6 +201,13 @@ declare module '@tanstack/react-router' {
       path: '/logowanie'
       fullPath: '/logowanie'
       preLoaderRoute: typeof LogowanieRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/orzecznictwo': {
+      id: '/orzecznictwo'
+      path: '/orzecznictwo'
+      fullPath: '/orzecznictwo'
+      preLoaderRoute: typeof OrzecznictwoRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/struktura-organizacyjna': {
@@ -247,6 +267,7 @@ const rootRouteChildren: RootRouteChildren = {
   AktualnosciRoute: AktualnosciRoute,
   KontaktRoute: KontaktRoute,
   LogowanieRoute: LogowanieRoute,
+  OrzecznictwoRoute: OrzecznictwoRoute,
   StrukturaOrganizacyjnaRoute: StrukturaOrganizacyjnaRoute,
   WokandaRoute: WokandaRoute,
   WydzialyRoute: WydzialyRoute,
