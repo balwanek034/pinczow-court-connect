@@ -16,11 +16,13 @@ import { Route as GodzinyUrzedowaniaRouteImport } from './routes/godziny-urzedow
 import { Route as KontaktRouteImport } from './routes/kontakt'
 import { Route as LogowanieRouteImport } from './routes/logowanie'
 import { Route as OrzecznictwoRouteImport } from './routes/orzecznictwo'
+import { Route as SedziowieRouteImport } from './routes/sedziowie'
 import { Route as SprawdzZapytanieRouteImport } from './routes/sprawdz-zapytanie'
 import { Route as StrukturaOrganizacyjnaRouteImport } from './routes/struktura-organizacyjna'
 import { Route as WokandaRouteImport } from './routes/wokanda'
 import { Route as WydzialyRouteImport } from './routes/wydzialy'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
+import { Route as AuthenticatedKorespondencjaRouteImport } from './routes/_authenticated/korespondencja'
 import { Route as AuthenticatedPanelRouteImport } from './routes/_authenticated/panel'
 
 const IndexRoute = IndexRouteImport.update({
@@ -57,6 +59,11 @@ const OrzecznictwoRoute = OrzecznictwoRouteImport.update({
   path: '/orzecznictwo',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SedziowieRoute = SedziowieRouteImport.update({
+  id: '/sedziowie',
+  path: '/sedziowie',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SprawdzZapytanieRoute = SprawdzZapytanieRouteImport.update({
   id: '/sprawdz-zapytanie',
   path: '/sprawdz-zapytanie',
@@ -82,6 +89,12 @@ const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
   path: '/admin',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedKorespondencjaRoute =
+  AuthenticatedKorespondencjaRouteImport.update({
+    id: '/korespondencja',
+    path: '/korespondencja',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedPanelRoute = AuthenticatedPanelRouteImport.update({
   id: '/panel',
   path: '/panel',
@@ -95,11 +108,13 @@ export interface FileRoutesByFullPath {
   '/kontakt': typeof KontaktRoute
   '/logowanie': typeof LogowanieRoute
   '/orzecznictwo': typeof OrzecznictwoRoute
+  '/sedziowie': typeof SedziowieRoute
   '/sprawdz-zapytanie': typeof SprawdzZapytanieRoute
   '/struktura-organizacyjna': typeof StrukturaOrganizacyjnaRoute
   '/wokanda': typeof WokandaRoute
   '/wydzialy': typeof WydzialyRoute
   '/admin': typeof AuthenticatedAdminRoute
+  '/korespondencja': typeof AuthenticatedKorespondencjaRoute
   '/panel': typeof AuthenticatedPanelRoute
 }
 export interface FileRoutesByTo {
@@ -109,11 +124,13 @@ export interface FileRoutesByTo {
   '/kontakt': typeof KontaktRoute
   '/logowanie': typeof LogowanieRoute
   '/orzecznictwo': typeof OrzecznictwoRoute
+  '/sedziowie': typeof SedziowieRoute
   '/sprawdz-zapytanie': typeof SprawdzZapytanieRoute
   '/struktura-organizacyjna': typeof StrukturaOrganizacyjnaRoute
   '/wokanda': typeof WokandaRoute
   '/wydzialy': typeof WydzialyRoute
   '/admin': typeof AuthenticatedAdminRoute
+  '/korespondencja': typeof AuthenticatedKorespondencjaRoute
   '/panel': typeof AuthenticatedPanelRoute
 }
 export interface FileRoutesById {
@@ -125,11 +142,13 @@ export interface FileRoutesById {
   '/kontakt': typeof KontaktRoute
   '/logowanie': typeof LogowanieRoute
   '/orzecznictwo': typeof OrzecznictwoRoute
+  '/sedziowie': typeof SedziowieRoute
   '/sprawdz-zapytanie': typeof SprawdzZapytanieRoute
   '/struktura-organizacyjna': typeof StrukturaOrganizacyjnaRoute
   '/wokanda': typeof WokandaRoute
   '/wydzialy': typeof WydzialyRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
+  '/_authenticated/korespondencja': typeof AuthenticatedKorespondencjaRoute
   '/_authenticated/panel': typeof AuthenticatedPanelRoute
 }
 export interface FileRouteTypes {
@@ -141,11 +160,13 @@ export interface FileRouteTypes {
     | '/kontakt'
     | '/logowanie'
     | '/orzecznictwo'
+    | '/sedziowie'
     | '/sprawdz-zapytanie'
     | '/struktura-organizacyjna'
     | '/wokanda'
     | '/wydzialy'
     | '/admin'
+    | '/korespondencja'
     | '/panel'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -155,11 +176,13 @@ export interface FileRouteTypes {
     | '/kontakt'
     | '/logowanie'
     | '/orzecznictwo'
+    | '/sedziowie'
     | '/sprawdz-zapytanie'
     | '/struktura-organizacyjna'
     | '/wokanda'
     | '/wydzialy'
     | '/admin'
+    | '/korespondencja'
     | '/panel'
   id:
     | '__root__'
@@ -170,11 +193,13 @@ export interface FileRouteTypes {
     | '/kontakt'
     | '/logowanie'
     | '/orzecznictwo'
+    | '/sedziowie'
     | '/sprawdz-zapytanie'
     | '/struktura-organizacyjna'
     | '/wokanda'
     | '/wydzialy'
     | '/_authenticated/admin'
+    | '/_authenticated/korespondencja'
     | '/_authenticated/panel'
   fileRoutesById: FileRoutesById
 }
@@ -186,6 +211,7 @@ export interface RootRouteChildren {
   KontaktRoute: typeof KontaktRoute
   LogowanieRoute: typeof LogowanieRoute
   OrzecznictwoRoute: typeof OrzecznictwoRoute
+  SedziowieRoute: typeof SedziowieRoute
   SprawdzZapytanieRoute: typeof SprawdzZapytanieRoute
   StrukturaOrganizacyjnaRoute: typeof StrukturaOrganizacyjnaRoute
   WokandaRoute: typeof WokandaRoute
@@ -243,6 +269,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof OrzecznictwoRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/sedziowie': {
+      id: '/sedziowie'
+      path: '/sedziowie'
+      fullPath: '/sedziowie'
+      preLoaderRoute: typeof SedziowieRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/sprawdz-zapytanie': {
       id: '/sprawdz-zapytanie'
       path: '/sprawdz-zapytanie'
@@ -278,6 +311,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/korespondencja': {
+      id: '/_authenticated/korespondencja'
+      path: '/korespondencja'
+      fullPath: '/korespondencja'
+      preLoaderRoute: typeof AuthenticatedKorespondencjaRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/panel': {
       id: '/_authenticated/panel'
       path: '/panel'
@@ -290,11 +330,13 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedAdminRoute: typeof AuthenticatedAdminRoute
+  AuthenticatedKorespondencjaRoute: typeof AuthenticatedKorespondencjaRoute
   AuthenticatedPanelRoute: typeof AuthenticatedPanelRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAdminRoute: AuthenticatedAdminRoute,
+  AuthenticatedKorespondencjaRoute: AuthenticatedKorespondencjaRoute,
   AuthenticatedPanelRoute: AuthenticatedPanelRoute,
 }
 
@@ -309,6 +351,7 @@ const rootRouteChildren: RootRouteChildren = {
   KontaktRoute: KontaktRoute,
   LogowanieRoute: LogowanieRoute,
   OrzecznictwoRoute: OrzecznictwoRoute,
+  SedziowieRoute: SedziowieRoute,
   SprawdzZapytanieRoute: SprawdzZapytanieRoute,
   StrukturaOrganizacyjnaRoute: StrukturaOrganizacyjnaRoute,
   WokandaRoute: WokandaRoute,
