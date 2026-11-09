@@ -32,17 +32,16 @@ export function SiteFooter() {
             <li><Link to="/aktualnosci" className="hover:underline">Aktualności</Link></li>
             <li><Link to="/wydzialy" className="hover:underline">Wydziały sądu</Link></li>
             <li><Link to="/wokanda" className="hover:underline">Wokanda</Link></li>
-            <li><Link to="/kontakt" className="hover:underline">Kontakt i godziny pracy</Link></li>
+            <li><Link to="/kontakt" className="hover:underline">Kontakt</Link></li>
+            <li><Link to="/godziny-urzedowania" className="hover:underline">Godziny urzędowania</Link></li>
           </ul>
         </div>
         <div>
           <h2 className="mb-3 text-xs font-bold uppercase tracking-widest opacity-70">Instytucje</h2>
           <ul className="space-y-1.5">
             {INSTYTUCJE.map((i) => (
-              <li key={i.href}>
-                <a href={i.href} target="_blank" rel="noreferrer" className="hover:underline">
-                  {i.label}
-                </a>
+              <li key={i.label}>
+                <span className="opacity-90">{i.label}</span>
               </li>
             ))}
           </ul>
@@ -51,8 +50,7 @@ export function SiteFooter() {
       <div className="border-t border-primary-foreground/15">
         <div className="mx-auto flex max-w-6xl flex-col gap-2 px-4 py-4 text-xs opacity-75 md:flex-row md:items-center md:justify-between">
           <span>
-            Strona na potrzeby serwera Pińczów RP (STRONA FIKCYJNA):{" "}
-            </a>
+            Strona fikcyjna stworzona na potrzeby projektu Pińczów Roleplay. Wszelkie dane są demonstracyjne.
           </span>
         </div>
       </div>
