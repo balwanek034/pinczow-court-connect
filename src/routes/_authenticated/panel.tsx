@@ -71,6 +71,7 @@ export interface OrzeczenieItem {
 function Panel() {
   const { profil, user, role, isAdmin, isPracownik, loading } = useAuth();
   const wyloguj = useWyloguj();
+  const noweZapytania = useNoweZapytania();
 
   const [aktywnaZakladka, setAktywnaZakladka] = useState<"orzecznictwo" | "wokanda" | "aktualnosci">("orzecznictwo");
 

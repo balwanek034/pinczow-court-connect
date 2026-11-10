@@ -13,7 +13,7 @@ import {
   Phone,
   Scale,
   Users,
-  Wallet,
+  MailCheck,
   FilePenLine,
 } from "lucide-react";
 import type { ReactNode } from "react";
@@ -45,7 +45,7 @@ export const Route = createFileRoute("/")({
 const TILE =
   "flex flex-col items-center justify-center gap-2 bg-tile px-2 py-5 text-center font-serif text-sm leading-tight text-muted-foreground transition-colors hover:bg-secondary";
 
-function Tile({ icon, label, to, href }: { icon: ReactNode; label: string; to?: "/wokanda" | "/kontakt"; href?: string }) {
+function Tile({ icon, label, to, href }: { icon: ReactNode; label: string; to?: "/wokanda" | "/kontakt" | "/godziny-urzedowania" | "/sprawdz-zapytanie" | "/sedziowie"; href?: string }) {
   const body = (
     <>
       <span className="text-primary">{icon}</span>
@@ -175,7 +175,7 @@ function Index() {
             Logowanie pracowników – system wewnętrzny sądu
           </Link>
           <Link
-            to="/kontakt"
+            to="/godziny-urzedowania"
             className="mt-px flex flex-col items-center gap-3 bg-primary px-6 py-6 text-center font-serif text-[15px] text-primary-foreground hover:bg-crimson-dark"
           >
             <Users className="h-10 w-10" strokeWidth={1.5} />
@@ -185,9 +185,9 @@ function Index() {
           <div className="mt-px grid grid-cols-3 gap-px">
             <Tile to="/wokanda" icon={<Gavel className="h-9 w-9" />} label="e-Wokanda" />
             <Tile to="/kontakt" icon={<FilePenLine className="h-9 w-9" />} label="Formularz kontaktowy" />
-            <Tile to="/kontakt" icon={<Wallet className="h-9 w-9" />} label="Numer rachunku" />
-            <Tile to="/kontakt" icon={<Clock className="h-9 w-9" />} label="Godziny urzędowania" />
-            <Tile href={SAD.portal} icon={<Landmark className="h-9 w-9" />} label="Portal Informacyjny" />
+            <Tile to="/sprawdz-zapytanie" icon={<MailCheck className="h-9 w-9" />} label="Sprawdź odpowiedź sądu" />
+            <Tile to="/godziny-urzedowania" icon={<Clock className="h-9 w-9" />} label="Godziny urzędowania" />
+            <Tile to="/sedziowie" icon={<Landmark className="h-9 w-9" />} label="Sędziowie i asesorzy" />
             <Tile href="https://orzeczenia.ms.gov.pl" icon={<Scale className="h-9 w-9" />} label="Portal orzeczeń" />
           </div>
 

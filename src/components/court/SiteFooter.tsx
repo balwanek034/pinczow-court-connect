@@ -32,7 +32,9 @@ export function SiteFooter() {
             <li><Link to="/aktualnosci" className="hover:underline">Aktualności</Link></li>
             <li><Link to="/wydzialy" className="hover:underline">Wydziały sądu</Link></li>
             <li><Link to="/wokanda" className="hover:underline">Wokanda</Link></li>
-            <li><Link to="/kontakt" className="hover:underline">Kontakt</Link></li>
+            <li><Link to="/kontakt" className="hover:underline">Formularz kontaktowy</Link></li>
+            <li><Link to="/sprawdz-zapytanie" className="hover:underline">Sprawdź odpowiedź sądu</Link></li>
+            <li><Link to="/sedziowie" className="hover:underline">Sędziowie i asesorzy</Link></li>
             <li><Link to="/godziny-urzedowania" className="hover:underline">Godziny urzędowania</Link></li>
           </ul>
         </div>
