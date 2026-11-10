@@ -45,7 +45,7 @@ export const Route = createFileRoute("/")({
 const TILE =
   "flex flex-col items-center justify-center gap-2 bg-tile px-2 py-5 text-center font-serif text-sm leading-tight text-muted-foreground transition-colors hover:bg-secondary";
 
-function Tile({ icon, label, to, href }: { icon: ReactNode; label: string; to?: "/wokanda" | "/kontakt" | "/godziny-urzedowania" | "/sprawdz-zapytanie" | "/sedziowie"; href?: string }) {
+function Tile({ icon, label, to, href }: { icon: ReactNode; label: string; to?: "/wokanda" | "/kontakt" | "/godziny-urzedowania" | "/sprawdz-zapytanie" | "/sedziowie" | "/orzecznictwo"; href?: string }) {
   const body = (
     <>
       <span className="text-primary">{icon}</span>
@@ -188,7 +188,7 @@ function Index() {
             <Tile to="/sprawdz-zapytanie" icon={<MailCheck className="h-9 w-9" />} label="Sprawdź odpowiedź sądu" />
             <Tile to="/godziny-urzedowania" icon={<Clock className="h-9 w-9" />} label="Godziny urzędowania" />
             <Tile to="/sedziowie" icon={<Landmark className="h-9 w-9" />} label="Sędziowie i asesorzy" />
-            <Tile href="https://orzeczenia.ms.gov.pl" icon={<Scale className="h-9 w-9" />} label="Portal orzeczeń" />
+            <Tile to="/orzecznictwo" icon={<Scale className="h-9 w-9" />} label="Orzecznictwo" />
           </div>
 
           <div className="mt-4 border-l-4 border-primary bg-notice p-4 text-xs leading-relaxed text-notice-foreground">
