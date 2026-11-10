@@ -126,8 +126,8 @@ function AdminTresc() {
       const { error } = await supabase.from("sedziowie").insert({
         imie_nazwisko: sedziaForm.imie_nazwisko.trim(),
         rodzaj: sedziaForm.rodzaj,
-        funkcja: sedziaForm.funkcja.trim() || undefined,
-        wydzial: sedziaForm.wydzial.trim() || undefined,
+        funkcja: sedziaForm.funkcja.trim(),
+        wydzial: sedziaForm.wydzial.trim(),
         kolejnosc: Number(sedziaForm.kolejnosc) || 1,
       });
       if (error) throw error;
