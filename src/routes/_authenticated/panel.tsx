@@ -10,7 +10,9 @@ import {
   Trash2,
   CheckCircle2,
   FileText,
+  Mail,
 } from "lucide-react";
+import { useNoweZapytania } from "@/lib/zapytania-licznik";
 import { PageShell } from "@/components/court/PageShell";
 import { useWyloguj } from "@/components/court/UserMenu";
 import { NAZWY_ROL, useAuth } from "@/hooks/useAuth";
@@ -253,7 +255,23 @@ function Panel() {
       </div>
 
       {/* Skróty */}
+      {noweZapytania > 0 && (
+        <Link
+          to="/korespondencja"
+          className="mb-4 flex items-center gap-2 border-l-4 border-primary bg-notice p-3 text-sm text-notice-foreground hover:underline"
+        >
+          <Mail className="h-4 w-4" />
+          <b>Masz {noweZapytania} {noweZapytania === 1 ? "zapytanie" : "zapytań"} od obywateli czekających na odpowiedź.</b>
+          Kliknij, aby odczytać.
+        </Link>
+      )}
       <div className="mb-8 grid gap-3 sm:grid-cols-2">
+        <Link to="/korespondencja" className={KAFEL}>
+          <Mail className="h-7 w-7" /> Korespondencja z obywatelami
+          {noweZapytania > 0 && (
+            <span className="ml-auto bg-primary px-2 py-0.5 text-xs font-bold text-primary-foreground">{noweZapytania} nowe</span>
+          )}
+        </Link>
         {isAdmin && (
           <Link to="/admin" className={KAFEL}>
             <ShieldCheck className="h-7 w-7" /> Panel administratora – konta
