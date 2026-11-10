@@ -1,6 +1,6 @@
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
-import { ChevronDown, LayoutDashboard, LogIn, LogOut, ShieldCheck, UserRound } from "lucide-react";
+import { ChevronDown, LayoutDashboard, LogIn, LogOut, Mail, ShieldCheck, UserRound } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { supabase } from "@/integrations/supabase/client";
 import { NAZWY_ROL, useAuth } from "@/hooks/useAuth";
+import { useNoweZapytania } from "@/lib/zapytania-licznik";
 
 export function useWyloguj() {
   const navigate = useNavigate();
@@ -26,6 +27,7 @@ export function useWyloguj() {
 export function UserMenu() {
   const { user, profil, role, isAdmin, loading } = useAuth();
   const wyloguj = useWyloguj();
+  const nowe = useNoweZapytania();
 
   if (loading) return <div className="h-[34px] w-40" aria-hidden />;
 
@@ -46,7 +48,14 @@ export function UserMenu() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger className="flex items-center gap-2 border border-primary bg-surface px-3 py-1 text-left text-primary hover:bg-secondary focus:outline-none">
-        <UserRound className="h-5 w-5" />
+        <span className="relative">
+          <UserRound className="h-5 w-5" />
+          {nowe > 0 && (
+            <span className="absolute -right-2 -top-2 flex h-4 min-w-4 items-center justify-center rounded-full bg-primary px-1 text-[9px] font-bold text-primary-foreground">
+              {nowe}
+            </span>
+          )}
+        </span>
         <span className="leading-tight">
           <span className="block max-w-[180px] truncate text-xs font-bold">{nazwa}</span>
           <span className="block text-[10px] uppercase text-muted-foreground">{rola}</span>
@@ -64,6 +73,18 @@ export function UserMenu() {
             <LayoutDashboard className="mr-2 h-4 w-4" /> Panel pracownika
           </Link>
         </DropdownMenuItem>
+        {role.length > 0 && (
+          <DropdownMenuItem asChild>
+            <Link to="/korespondencja" className="cursor-pointer">
+              <Mail className="mr-2 h-4 w-4" /> Korespondencja
+              {nowe > 0 && (
+                <span className="ml-auto bg-primary px-1.5 py-0.5 text-[10px] font-bold text-primary-foreground">
+                  {nowe} nowe
+                </span>
+              )}
+            </Link>
+          </DropdownMenuItem>
+        )}
         {isAdmin && (
           <DropdownMenuItem asChild>
             <Link to="/admin" className="cursor-pointer">
